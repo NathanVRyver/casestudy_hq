@@ -1,13 +1,11 @@
 import type { Metadata } from "next"
 import { ThemeProvider } from "next-themes"
+import { SessionProvider } from "next-auth/react"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { siteConfig } from "./siteConfig"
+import { CryptoProvider } from "@/contexts/CryptoContext"
 
-import { Sidebar } from "@/components/ui/navigation/Sidebar"
-// home page only no need to spin up a db
-//
-// COME HERE -- SEARCH THIS 
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
@@ -51,10 +49,13 @@ export default function RootLayout({
         suppressHydrationWarning
       >
         <div className="mx-auto max-w-screen-2xl">
-          <ThemeProvider defaultTheme="system" attribute="class">
-            <Sidebar />
-            <main className="lg:pl-72">{children}</main>
-          </ThemeProvider>
+          <SessionProvider>
+            <ThemeProvider defaultTheme="system" attribute="class">
+              <CryptoProvider>
+                <main>{children}</main>
+              </CryptoProvider>
+            </ThemeProvider>
+          </SessionProvider>
         </div>
       </body>
     </html>
