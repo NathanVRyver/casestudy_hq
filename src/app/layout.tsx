@@ -5,6 +5,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { siteConfig } from "./siteConfig"
 import { CryptoProvider } from "@/contexts/CryptoContext"
+import { ConditionalLayout } from "@/components/ConditionalLayout"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,7 +34,9 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
   },
   icons: {
-    icon: "/favicon.ico",
+    icon: "/athenacrypto.png",
+    shortcut: "/athenacrypto.png",
+    apple: "/athenacrypto.png",
   },
 }
 
@@ -48,15 +51,15 @@ export default function RootLayout({
         className={`${inter.className} overflow-y-scroll scroll-auto antialiased selection:bg-indigo-100 selection:text-indigo-700 dark:bg-gray-950`}
         suppressHydrationWarning
       >
-        <div className="mx-auto max-w-screen-2xl">
-          <SessionProvider>
-            <ThemeProvider defaultTheme="system" attribute="class">
-              <CryptoProvider>
-                <main>{children}</main>
-              </CryptoProvider>
-            </ThemeProvider>
-          </SessionProvider>
-        </div>
+        <SessionProvider>
+          <ThemeProvider defaultTheme="system" attribute="class">
+            <CryptoProvider>
+              <ConditionalLayout>
+                {children}
+              </ConditionalLayout>
+            </CryptoProvider>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   )
