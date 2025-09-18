@@ -1,9 +1,11 @@
 export const siteConfig = {
-  name: "Dashboard",
-  url: "https://dashboard.tremor.so",
-  description: "The only dashboard you will ever need.",
+  name: "AthenaCrypto",
+  url: "",
+  description:
+    "Professional cryptocurrency tracking dashboard with real-time price updates.",
   baseLinks: {
     home: "/",
+    dashboard: "/dashboard",
     overview: "/overview",
     details: "/details",
     settings: {
