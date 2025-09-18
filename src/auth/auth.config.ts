@@ -3,7 +3,7 @@ import type { NextAuthConfig } from "next-auth"
 export const authConfig: NextAuthConfig = {
   providers: [],
   pages: {
-    signIn: "/login",
+    signIn: "/auth/signin",
   },
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
@@ -13,11 +13,12 @@ export const authConfig: NextAuthConfig = {
       if (isOnDashboard) {
         if (isLoggedIn) return true
         return false
-      } else if (isLoggedIn) {
-        return Response.redirect(new URL("/dashboard", nextUrl))
       }
       
       return true
     },
+  },
+  session: {
+    strategy: "jwt",
   },
 }

@@ -51,16 +51,13 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      {/* Header */}
-      <div className="sticky top-0 z-30 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      {/* Header - shows overview toggle */}
+      <div className="sticky top-16 lg:top-0 z-30 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
         <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-xl font-bold text-gray-900 dark:text-gray-50">
-                AthenaCrypto
-              </h1>
-            </div>
-
+          <div className="flex h-12 lg:h-16 items-center justify-between lg:justify-end">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-50 lg:hidden">
+              Dashboard
+            </h2>
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setShowOverview(!showOverview)}
