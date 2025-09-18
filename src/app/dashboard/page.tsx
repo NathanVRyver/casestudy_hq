@@ -2,24 +2,20 @@
 
 import { Badge } from "@/components/Badge"
 import { Card } from "@/components/Card"
-import { CryptoChart } from "@/components/CryptoChart"
 import { CryptoTabs } from "@/components/CryptoTabs"
-import { Dialog } from "@/components/Dialog"
 import { MarketOverview } from "@/components/MarketOverview"
 import { PriceTicker } from "@/components/PriceTicker"
 import { Searchbar } from "@/components/Searchbar"
-import { cx } from "@/lib/utils"
 import { useCrypto } from "@/contexts/CryptoContext"
-import { TabCategory, CryptoAsset } from "@/types/crypto"
+import { cx } from "@/lib/utils"
+import { TabCategory } from "@/types/crypto"
 import {
   RiArrowDownLine,
   RiArrowUpLine,
   RiDashboardLine,
   RiSearchLine,
-  RiWifiLine,
-  RiWifiOffLine,
 } from "@remixicon/react"
-import { useState, useMemo } from "react"
+import { useMemo, useState } from "react"
 
 export default function DashboardPage() {
   const {
@@ -34,9 +30,8 @@ export default function DashboardPage() {
     isPriceChanging,
     isRecentlyUpdated,
   } = useCrypto()
-  
+
   const [activeTab, setActiveTab] = useState<TabCategory>("trending")
-  const [selectedAsset, setSelectedAsset] = useState<CryptoAsset | null>(null)
   const [showOverview, setShowOverview] = useState(false)
 
   const tabs = [
@@ -143,8 +138,7 @@ export default function DashboardPage() {
             {displayedAssets.map((asset) => (
               <Card
                 key={asset.symbol}
-                className="group relative cursor-pointer overflow-hidden transition-all hover:shadow-lg"
-                onClick={() => setSelectedAsset(asset)}
+                className="group relative overflow-hidden transition-all hover:shadow-lg"
               >
                 <div className="p-4">
                   <div className="mb-3 flex items-start justify-between">
@@ -236,24 +230,6 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
-
-      {/* Chart Dialog */}
-      <Dialog
-        open={!!selectedAsset}
-        onOpenChange={(open) => !open && setSelectedAsset(null)}
-      >
-        {selectedAsset && (
-          <div className="p-6">
-            <CryptoChart
-              symbol={selectedAsset.symbol}
-              name={selectedAsset.name}
-              currentPrice={selectedAsset.price}
-              change24hPercent={selectedAsset.change24hPercent}
-              height={400}
-            />
-          </div>
-        )}
-      </Dialog>
     </div>
   )
 }
