@@ -5,11 +5,11 @@ const nextConfig = {
     return [
       {
         source: "/",
-        destination: "/overview",
+        destination: "/dashboard",
         permanent: true,
       },
-    ];
+    ]
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig
