@@ -1,9 +1,10 @@
 "use client"
 
-import { RiEyeLine, RiEyeOffLine } from "@remixicon/react"
+import { RiEyeLine, RiEyeOffLine, RiMoonLine, RiSunLine } from "@remixicon/react"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { useState, Suspense } from "react"
+import { useState, Suspense, useEffect } from "react"
+import { useTheme } from "next-themes"
 
 function SignInForm() {
   const [email, setEmail] = useState("")
@@ -11,10 +12,16 @@ function SignInForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [mounted, setMounted] = useState(false)
 
   const router = useRouter()
   const searchParams = useSearchParams()
   const callbackUrl = searchParams.get("callbackUrl") || "/dashboard"
+  const { theme, setTheme } = useTheme()
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -43,12 +50,27 @@ function SignInForm() {
 
   return (
     <div className="bg-cream flex min-h-screen dark:bg-stone-950">
+      {/* Theme Toggle - Fixed Position */}
+      {mounted && (
+        <button
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+          className="fixed top-4 right-4 z-50 rounded-lg p-2 text-stone-600 transition-colors duration-200 hover:bg-stone-100 hover:text-stone-900 dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-stone-50"
+          aria-label="Toggle theme"
+        >
+          {theme === "dark" ? (
+            <RiSunLine className="h-5 w-5" />
+          ) : (
+            <RiMoonLine className="h-5 w-5" />
+          )}
+        </button>
+      )}
+
       {/* Left Column - Abstract Image (2/3 width) */}
       <div className="relative hidden lg:flex lg:w-2/3">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: "url(/wallpaper.png)",
+            backgroundImage: `url(${theme === "dark" ? "/wallpaper.png" : "/wallpaper_light.png"})`,
           }}
         />
         <div className="absolute inset-0 bg-stone-900/20 dark:bg-stone-950/40" />
