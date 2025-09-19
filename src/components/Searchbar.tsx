@@ -10,17 +10,17 @@ const inputStyles = tv({
   base: [
     // base
     "relative block w-full appearance-none rounded-md border px-2.5 py-1.5 outline-none transition sm:text-sm",
-    // border color (border only used in dark mode for better aesthetics in filterbar)
-    "border-transparent dark:border-gray-800",
+    // border color
+    "border-stone-200 dark:border-stone-700",
     // text color
-    "text-gray-900 dark:text-gray-50",
+    "text-stone-900 dark:text-stone-50",
     // placeholder color
-    "placeholder-gray-400 dark:placeholder-gray-500",
+    "placeholder-stone-400 dark:placeholder-stone-500",
     // background color
-    "bg-gray-100 dark:bg-gray-950",
+    "bg-stone-50 dark:bg-stone-900",
     // disabled
-    "disabled:border-gray-300 disabled:bg-gray-100 disabled:text-gray-400",
-    "disabled:dark:border-gray-700 disabled:dark:bg-gray-800 disabled:dark:text-gray-500",
+    "disabled:border-stone-300 disabled:bg-stone-100 disabled:text-stone-400",
+    "disabled:dark:border-stone-600 disabled:dark:bg-stone-800 disabled:dark:text-stone-500",
     // focus
     focusInput,
     // invalid (optional)
@@ -74,7 +74,7 @@ const Searchbar = React.forwardRef<HTMLInputElement, InputProps>(
             // base
             "pointer-events-none absolute bottom-0 left-2 flex h-full items-center justify-center",
             // text color
-            "text-gray-400 dark:text-gray-600",
+            "text-stone-400 dark:text-stone-500",
           )}
         >
           <RiSearchLine

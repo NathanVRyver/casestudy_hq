@@ -19,7 +19,7 @@ interface MarketOverviewProps {
 }
 
 export function MarketOverview({ className }: MarketOverviewProps) {
-  const { cryptoAssets, marketStats, topGainers, topLosers, formatPrice } = useCrypto()
+  const { cryptoAssets, marketStats, topGainers, topLosers, formatPrice, getPriceDirection } = useCrypto()
 
   const formatValue = (value: number, type: "currency" | "percent" | "number"): string => {
     switch (type) {
@@ -136,7 +136,12 @@ export function MarketOverview({ className }: MarketOverviewProps) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-gray-900 dark:text-gray-50">
+                  <p className={cx(
+                    "font-medium text-mono tabular-nums price-direction",
+                    getPriceDirection(asset.symbol).direction === 'up' && "price-direction-up",
+                    getPriceDirection(asset.symbol).direction === 'down' && "price-direction-down",
+                    getPriceDirection(asset.symbol).direction === 'none' && "price-direction-none text-gray-900 dark:text-gray-50"
+                  )}>
                     ${formatPrice(asset.price)}
                   </p>
                   <p className="text-sm text-green-600 dark:text-green-400">
@@ -169,7 +174,12 @@ export function MarketOverview({ className }: MarketOverviewProps) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium text-gray-900 dark:text-gray-50">
+                  <p className={cx(
+                    "font-medium text-mono tabular-nums price-direction",
+                    getPriceDirection(asset.symbol).direction === 'up' && "price-direction-up",
+                    getPriceDirection(asset.symbol).direction === 'down' && "price-direction-down",
+                    getPriceDirection(asset.symbol).direction === 'none' && "price-direction-none text-gray-900 dark:text-gray-50"
+                  )}>
                     ${formatPrice(asset.price)}
                   </p>
                   <p className="text-sm text-red-600 dark:text-red-400">

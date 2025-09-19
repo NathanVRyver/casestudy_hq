@@ -8,15 +8,14 @@ import { PriceTicker } from "@/components/PriceTicker"
 import { Searchbar } from "@/components/Searchbar"
 import { useCrypto } from "@/contexts/CryptoContext"
 import { cx } from "@/lib/utils"
-import { TabCategory } from "@/types/crypto"
+import { CryptoAsset, TabCategory } from "@/types/crypto"
 import {
   RiArrowDownLine,
   RiArrowUpLine,
   RiDashboardLine,
   RiSearchLine,
 } from "@remixicon/react"
-import { useMemo, useState, useEffect, useRef } from "react"
-import { CryptoAsset } from "@/types/crypto"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 export default function DashboardPage() {
   const {
@@ -33,7 +32,7 @@ export default function DashboardPage() {
     formatPrice,
     formatVolume,
     formatChange,
-    isPriceChanging,
+    getPriceDirection,
     isRecentlyUpdated,
   } = useCrypto()
 
@@ -215,10 +214,10 @@ export default function DashboardPage() {
                 <div className="p-4">
                   <div className="mb-3 flex items-start justify-between">
                     <div>
-                      <h3 className="text-display font-semibold text-stone-900 dark:text-stone-50">
+                      <h3 className="text-mono font-semibold text-stone-900 dark:text-stone-50 tracking-tight">
                         {asset.symbol}
                       </h3>
-                      <p className="text-sm text-stone-500 dark:text-stone-400">
+                      <p className="text-mono text-sm text-stone-500 dark:text-stone-400 tracking-tight">
                         {asset.name}
                       </p>
                     </div>
@@ -241,12 +240,10 @@ export default function DashboardPage() {
                     <div>
                       <p
                         className={cx(
-                          "text-2xl font-bold text-mono tabular-nums transition-all duration-300",
-                          isPriceChanging(asset.symbol) === "up"
-                            ? "price-up animate-count-up"
-                            : isPriceChanging(asset.symbol) === "down"
-                              ? "price-down animate-count-up"
-                              : "text-stone-900 dark:text-stone-50",
+                          "text-2xl font-bold text-mono tabular-nums price-direction",
+                          getPriceDirection(asset.symbol).direction === 'up' && "price-direction-up",
+                          getPriceDirection(asset.symbol).direction === 'down' && "price-direction-down",
+                          getPriceDirection(asset.symbol).direction === 'none' && "price-direction-none text-stone-900 dark:text-stone-50"
                         )}
                       >
                         ${formatPrice(asset.price)}
@@ -255,8 +252,8 @@ export default function DashboardPage() {
                         className={cx(
                           "text-sm text-mono tabular-nums",
                           asset.change24h >= 0
-                            ? "price-up"
-                            : "price-down",
+                            ? "text-green-600 dark:text-green-400"
+                            : "text-red-600 dark:text-red-400",
                         )}
                       >
                         {asset.change24h >= 0 ? "+" : ""}$
@@ -269,7 +266,7 @@ export default function DashboardPage() {
                         <p className="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wide">
                           24h Volume
                         </p>
-                        <p className="text-sm text-mono font-medium text-stone-900 dark:text-stone-50 tabular-nums">
+                        <p className=" text-mono font-medium text-stone-900 dark:text-stone-50 tabular-nums">
                           {formatVolume(asset.volume24h)}
                         </p>
                       </div>

@@ -80,16 +80,6 @@ const config: Config = {
             boxShadow: '0 0 40px rgba(212, 175, 55, 0.3)',
           },
         },
-        countUp: {
-          from: {
-            opacity: '0',
-            transform: 'scale(0.8)',
-          },
-          to: {
-            opacity: '1',
-            transform: 'scale(1)',
-          },
-        },
         hide: {
           from: { opacity: "1" },
           to: { opacity: "0" },
@@ -133,7 +123,6 @@ const config: Config = {
         'scan': 'scan 3s ease-in-out infinite',
         'shimmer': 'shimmer 2s infinite',
         'glow': 'glow 2s ease-in-out infinite',
-        'count-up': 'countUp 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
         hide: "hide 150ms cubic-bezier(0.16, 1, 0.3, 1)",
         slideDownAndFade:
           "slideDownAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",

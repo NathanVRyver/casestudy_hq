@@ -1,12 +1,24 @@
 "use client"
 
-import { createContext, useContext, useEffect, useState, useCallback, ReactNode } from "react"
+import { createContext, useContext, useEffect, useState, useCallback, ReactNode, useRef } from "react"
 import { CryptoAsset, Binance24hrTickerStream, MarketStats } from "@/types/crypto"
 import { cryptoAPI } from "@/services/crypto-api"
 import { binanceWS } from "@/services/websocket"
 
-interface PriceChange {
+interface PriceDirection {
   direction: 'up' | 'down' | 'none'
+  timestamp: number
+  intensity: number // 0-1 for animation intensity
+}
+
+interface PriceUpdate {
+  symbol: string
+  price: number
+  change24h: number
+  change24hPercent: number
+  volume24h: number
+  high24h: number
+  low24h: number
   timestamp: number
 }
 
@@ -16,8 +28,8 @@ interface CryptoContextType {
   isLoading: boolean
   isConnected: boolean
   
-  // Price tracking
-  priceChanges: Record<string, PriceChange>
+  // Price direction tracking
+  priceDirections: Record<string, PriceDirection>
   
   // Market stats
   marketStats: MarketStats
@@ -38,7 +50,7 @@ interface CryptoContextType {
   formatPrice: (price: number) => string
   formatVolume: (volume: number) => string
   formatChange: (change: number) => string
-  isPriceChanging: (symbol: string) => 'up' | 'down' | 'none'
+  getPriceDirection: (symbol: string) => PriceDirection
   isRecentlyUpdated: (symbol: string) => boolean
 }
 
@@ -57,57 +69,119 @@ interface CryptoProviderProps {
 }
 
 export function CryptoProvider({ children }: CryptoProviderProps) {
+  // UI State - throttled updates for smooth rendering
   const [cryptoAssets, setCryptoAssets] = useState<CryptoAsset[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isConnected, setIsConnected] = useState(false)
-  const [priceChanges, setPriceChanges] = useState<Record<string, PriceChange>>({})
+  const [priceDirections, setPriceDirections] = useState<Record<string, PriceDirection>>({})
   const [searchQuery, setSearchQuery] = useState("")
   const [filteredAssets, setFilteredAssets] = useState<CryptoAsset[]>([])
 
-  // Handle ticker updates from WebSocket
-  const handleTickerUpdate = useCallback((ticker: Binance24hrTickerStream) => {
-    setCryptoAssets(prevAssets => {
-      const updated = [...prevAssets]
-      const index = updated.findIndex(a => `${a.symbol}USDT` === ticker.s)
+  // Refs for immediate data storage (WebSocket → ref/store)
+  const liveDataRef = useRef<Map<string, CryptoAsset>>(new Map())
+  const priceDirectionsRef = useRef<Map<string, PriceDirection>>(new Map())
+  const updateQueueRef = useRef<Set<string>>(new Set())
+  const animationFrameRef = useRef<number>()
+
+  // Throttled UI update using requestAnimationFrame
+  const scheduleUIUpdate = useCallback(() => {
+    if (animationFrameRef.current) return // Already scheduled
+    
+    animationFrameRef.current = requestAnimationFrame(() => {
+      animationFrameRef.current = undefined
       
-      if (index !== -1) {
-        const oldPrice = updated[index].price
-        const newPrice = parseFloat(ticker.c)
-        
-        // Track price direction for all components to use
-        if (oldPrice !== newPrice) {
-          const symbol = updated[index].symbol
-          const direction = newPrice > oldPrice ? 'up' : 'down'
+      // Update crypto assets from live data
+      const assetsToUpdate = Array.from(updateQueueRef.current)
+      if (assetsToUpdate.length > 0) {
+        setCryptoAssets(prevAssets => {
+          const updated = [...prevAssets]
           
-          setPriceChanges(prev => ({
-            ...prev,
-            [symbol]: { direction, timestamp: Date.now() }
-          }))
+          assetsToUpdate.forEach(symbol => {
+            const liveAsset = liveDataRef.current.get(symbol)
+            if (liveAsset) {
+              const index = updated.findIndex(a => a.symbol === symbol)
+              if (index !== -1) {
+                updated[index] = liveAsset
+              }
+            }
+          })
           
-          // Auto-reset after 2 seconds
-          setTimeout(() => {
-            setPriceChanges(prev => ({
-              ...prev,
-              [symbol]: { direction: 'none', timestamp: Date.now() }
-            }))
-          }, 2000)
-        }
+          return updated
+        })
         
-        updated[index] = {
-          ...updated[index],
-          price: newPrice,
-          change24h: parseFloat(ticker.p),
-          change24hPercent: parseFloat(ticker.P),
-          volume24h: parseFloat(ticker.v) * parseFloat(ticker.c),
-          high24h: parseFloat(ticker.h),
-          low24h: parseFloat(ticker.l),
-          lastUpdate: Date.now()
-        }
+        // Update price directions for UI
+        setPriceDirections(prev => {
+          const newDirections = { ...prev }
+          assetsToUpdate.forEach(symbol => {
+            const direction = priceDirectionsRef.current.get(symbol)
+            if (direction) {
+              newDirections[symbol] = direction
+            }
+          })
+          return newDirections
+        })
+        
+        updateQueueRef.current.clear()
       }
-      
-      return updated
     })
   }, [])
+
+  // Handle ticker updates from WebSocket (immediate storage)
+  const handleTickerUpdate = useCallback((ticker: Binance24hrTickerStream) => {
+    const symbol = ticker.s.replace('USDT', '')
+    const currentAsset = liveDataRef.current.get(symbol)
+    
+    if (currentAsset) {
+      const oldPrice = currentAsset.price
+      const newPrice = parseFloat(ticker.c)
+      
+      // Update live data immediately
+      const updatedAsset: CryptoAsset = {
+        ...currentAsset,
+        price: newPrice,
+        change24h: parseFloat(ticker.p),
+        change24hPercent: parseFloat(ticker.P),
+        volume24h: parseFloat(ticker.v) * parseFloat(ticker.c),
+        high24h: parseFloat(ticker.h),
+        low24h: parseFloat(ticker.l),
+        lastUpdate: Date.now()
+      }
+      
+      liveDataRef.current.set(symbol, updatedAsset)
+      
+      // Track price direction with intensity based on change magnitude
+      if (oldPrice !== newPrice) {
+        const direction = newPrice > oldPrice ? 'up' : 'down'
+        const changePercent = Math.abs((newPrice - oldPrice) / oldPrice)
+        const intensity = Math.min(changePercent * 100, 1) // Cap at 1
+        
+        const priceDirection: PriceDirection = {
+          direction,
+          timestamp: Date.now(),
+          intensity
+        }
+        
+        priceDirectionsRef.current.set(symbol, priceDirection)
+        
+        // Auto-reset direction after 3 seconds
+        setTimeout(() => {
+          const currentDirection = priceDirectionsRef.current.get(symbol)
+          if (currentDirection && currentDirection.timestamp === priceDirection.timestamp) {
+            priceDirectionsRef.current.set(symbol, {
+              ...currentDirection,
+              direction: 'none'
+            })
+            updateQueueRef.current.add(symbol)
+            scheduleUIUpdate()
+          }
+        }, 3000)
+      }
+      
+      // Queue for UI update
+      updateQueueRef.current.add(symbol)
+      scheduleUIUpdate()
+    }
+  }, [scheduleUIUpdate])
 
   // Initialize data and WebSocket
   useEffect(() => {
@@ -116,6 +190,20 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
       try {
         const tickers = await cryptoAPI.get24hrTickers()
         const assets = cryptoAPI.transformTickersToAssets(tickers)
+        
+        // Populate refs with initial data
+        liveDataRef.current.clear()
+        priceDirectionsRef.current.clear()
+        
+        assets.forEach(asset => {
+          liveDataRef.current.set(asset.symbol, asset)
+          priceDirectionsRef.current.set(asset.symbol, {
+            direction: 'none',
+            timestamp: Date.now(),
+            intensity: 0
+          })
+        })
+        
         setCryptoAssets(assets)
         setFilteredAssets(assets)
         
@@ -147,6 +235,9 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
     const unsubscribeDisconnect = binanceWS.onDisconnect(() => setIsConnected(false))
 
     return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current)
+      }
       unsubscribeMessage()
       unsubscribeConnect()
       unsubscribeDisconnect()
@@ -212,10 +303,12 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
     return `$${volume.toFixed(2)}`
   }
 
-  const isPriceChanging = (symbol: string): 'up' | 'down' | 'none' => {
-    const change = priceChanges[symbol]
-    if (!change) return 'none'
-    return change.direction
+  const getPriceDirection = (symbol: string): PriceDirection => {
+    const direction = priceDirections[symbol]
+    if (!direction) {
+      return { direction: 'none', timestamp: Date.now(), intensity: 0 }
+    }
+    return direction
   }
 
   const isRecentlyUpdated = (symbol: string): boolean => {
@@ -240,8 +333,8 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
     isLoading,
     isConnected,
     
-    // Price tracking
-    priceChanges,
+    // Price direction tracking
+    priceDirections,
     
     // Market stats
     marketStats,
@@ -262,7 +355,7 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
     formatPrice,
     formatVolume,
     formatChange,
-    isPriceChanging,
+    getPriceDirection,
     isRecentlyUpdated,
   }
 

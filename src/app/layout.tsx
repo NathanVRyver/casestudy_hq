@@ -6,6 +6,7 @@ import "./globals.css"
 import { siteConfig } from "./siteConfig"
 import { CryptoProvider } from "@/contexts/CryptoContext"
 import { ConditionalLayout } from "@/components/ConditionalLayout"
+import { DynamicFavicon } from "@/components/DynamicFavicon"
 
 const inter = Inter({
   subsets: ["latin"],
@@ -41,9 +42,9 @@ export const metadata: Metadata = {
     siteName: siteConfig.name,
   },
   icons: {
-    icon: "/athenacrypto.png",
-    shortcut: "/athenacrypto.png",
-    apple: "/athenacrypto.png",
+    icon: "/favicon/dark.png",
+    shortcut: "/favicon/dark.png",
+    apple: "/favicon/dark.png",
   },
 }
 
@@ -60,6 +61,7 @@ export default function RootLayout({
       >
         <SessionProvider>
           <ThemeProvider defaultTheme="system" attribute="class">
+            <DynamicFavicon />
             <CryptoProvider>
               <ConditionalLayout>
                 {children}
