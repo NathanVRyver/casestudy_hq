@@ -1,8 +1,6 @@
 "use client"
 
-import { Button } from "@/components/Button"
-import { Card } from "@/components/Card"
-import { RiEyeLine, RiEyeOffLine, RiLoginBoxLine } from "@remixicon/react"
+import { RiEyeLine, RiEyeOffLine } from "@remixicon/react"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState } from "react"
@@ -44,26 +42,26 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-cream dark:bg-stone-950">
+    <div className="bg-cream flex min-h-screen dark:bg-stone-950">
       {/* Left Column - Abstract Image (2/3 width) */}
-      <div className="hidden lg:flex lg:w-2/3 relative">
-        <div 
+      <div className="relative hidden lg:flex lg:w-2/3">
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'url(/wallpaper.png)'
+            backgroundImage: "url(/wallpaper.png)",
           }}
         />
         <div className="absolute inset-0 bg-stone-900/20 dark:bg-stone-950/40" />
       </div>
-      
+
       {/* Right Column - Login Form (1/3 width) */}
-      <div className="flex w-full lg:w-1/3 items-center justify-center px-6 py-12">
+      <div className="flex w-full items-center justify-center px-6 py-12 lg:w-1/3">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h1 className="text-display text-3xl font-semibold text-stone-900 dark:text-stone-50 mb-2">
+            <h1 className="text-display mb-2 text-3xl font-semibold text-stone-900 dark:text-stone-50">
               AthenaCrypto
             </h1>
-            <h2 className="text-xl font-normal text-stone-700 dark:text-stone-300 mb-2">
+            <h2 className="mb-2 text-xl font-normal text-stone-700 dark:text-stone-300">
               Welcome back
             </h2>
             <p className="text-stone-500 dark:text-stone-400">
@@ -110,7 +108,7 @@ export default function SignInPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors duration-200"
+                  className="absolute inset-y-0 right-0 flex items-center pr-4 text-stone-400 transition-colors duration-200 hover:text-stone-600 dark:hover:text-stone-300"
                 >
                   {showPassword ? (
                     <RiEyeOffLine className="h-5 w-5" />
@@ -122,26 +120,40 @@ export default function SignInPage() {
             </div>
 
             {error && (
-              <div className="text-center text-sm text-loss bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 rounded-lg p-3">{error}</div>
+              <div className="text-loss rounded-lg border border-red-200 bg-red-50 p-3 text-center text-sm dark:border-red-800/30 dark:bg-red-950/20">
+                {error}
+              </div>
             )}
 
-            <button type="submit" disabled={isLoading} className="mono-button-primary w-full">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="mono-button-primary w-full"
+            >
               {isLoading ? "Signing in..." : "Sign in"}
             </button>
           </form>
 
-          <div className="rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-4">
+          <div className="rounded-lg border border-stone-200 bg-stone-50 p-4 dark:border-stone-800 dark:bg-stone-900">
             <h3 className="mb-3 text-sm font-medium text-stone-700 dark:text-stone-300">
               Demo Accounts
             </h3>
             <div className="space-y-3 text-xs text-stone-500 dark:text-stone-400">
-              <div className="border-l-2 border-stone-300 dark:border-stone-600 pl-3">
-                <div className="font-mono text-stone-700 dark:text-stone-300">admin@athenahq.com</div>
-                <div className="text-stone-500 dark:text-stone-400">admin123</div>
+              <div className="border-l-2 border-stone-300 pl-3 dark:border-stone-600">
+                <div className="font-mono text-stone-700 dark:text-stone-300">
+                  admin@athenahq.com
+                </div>
+                <div className="text-stone-500 dark:text-stone-400">
+                  admin123
+                </div>
               </div>
-              <div className="border-l-2 border-stone-300 dark:border-stone-600 pl-3">
-                <div className="font-mono text-stone-700 dark:text-stone-300">demo@athenahq.com</div>
-                <div className="text-stone-500 dark:text-stone-400">demo123</div>
+              <div className="border-l-2 border-stone-300 pl-3 dark:border-stone-600">
+                <div className="font-mono text-stone-700 dark:text-stone-300">
+                  demo@athenahq.com
+                </div>
+                <div className="text-stone-500 dark:text-stone-400">
+                  demo123
+                </div>
               </div>
             </div>
           </div>

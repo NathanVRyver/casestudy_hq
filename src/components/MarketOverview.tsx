@@ -1,17 +1,15 @@
 "use client"
 
-import { useMemo } from "react"
-import { CryptoAsset, MarketStats } from "@/types/crypto"
 import { Card } from "@/components/Card"
 import { ProgressBar } from "@/components/ProgressBar"
-import { cx } from "@/lib/utils"
 import { useCrypto } from "@/contexts/CryptoContext"
+import { cx } from "@/lib/utils"
 import {
-  RiStockLine,
-  RiExchangeDollarLine,
-  RiCoinLine,
+  RiArrowDownLine,
   RiArrowUpLine,
-  RiArrowDownLine
+  RiCoinLine,
+  RiExchangeDollarLine,
+  RiStockLine,
 } from "@remixicon/react"
 
 interface MarketOverviewProps {
@@ -19,9 +17,19 @@ interface MarketOverviewProps {
 }
 
 export function MarketOverview({ className }: MarketOverviewProps) {
-  const { cryptoAssets, marketStats, topGainers, topLosers, formatPrice, getPriceDirection } = useCrypto()
+  const {
+    cryptoAssets,
+    marketStats,
+    topGainers,
+    topLosers,
+    formatPrice,
+    getPriceDirection,
+  } = useCrypto()
 
-  const formatValue = (value: number, type: "currency" | "percent" | "number"): string => {
+  const formatValue = (
+    value: number,
+    type: "currency" | "percent" | "number",
+  ): string => {
     switch (type) {
       case "currency":
         if (value >= 1e12) return `$${(value / 1e12).toFixed(2)}T`
@@ -43,27 +51,27 @@ export function MarketOverview({ className }: MarketOverviewProps) {
       value: formatValue(marketStats.totalMarketCap, "currency"),
       change: marketStats.marketChange24h,
       icon: RiStockLine,
-      color: "indigo"
+      color: "indigo",
     },
     {
       title: "24h Volume",
       value: formatValue(marketStats.totalVolume24h, "currency"),
       change: 0,
       icon: RiExchangeDollarLine,
-      color: "purple"
+      color: "purple",
     },
     {
       title: "Active Coins",
       value: marketStats.activeCoins.toString(),
       change: 0,
       icon: RiCoinLine,
-      color: "green"
-    }
+      color: "green",
+    },
   ]
 
   const topMovers = {
     gainers: topGainers.slice(0, 3),
-    losers: topLosers.slice(0, 3)
+    losers: topLosers.slice(0, 3),
   }
 
   return (
@@ -83,12 +91,14 @@ export function MarketOverview({ className }: MarketOverviewProps) {
                     {stat.value}
                   </p>
                   {stat.change !== 0 && (
-                    <div className={cx(
-                      "mt-1 flex items-center gap-1 text-sm",
-                      stat.change >= 0
-                        ? "text-green-600 dark:text-green-400"
-                        : "text-red-600 dark:text-red-400"
-                    )}>
+                    <div
+                      className={cx(
+                        "mt-1 flex items-center gap-1 text-sm",
+                        stat.change >= 0
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-600 dark:text-red-400",
+                      )}
+                    >
                       {stat.change >= 0 ? (
                         <RiArrowUpLine className="h-3 w-3" />
                       ) : (
@@ -98,13 +108,19 @@ export function MarketOverview({ className }: MarketOverviewProps) {
                     </div>
                   )}
                 </div>
-                <div className={cx(
-                  "rounded-lg p-2",
-                  stat.color === "indigo" && "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400",
-                  stat.color === "purple" && "bg-purple-100 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400",
-                  stat.color === "orange" && "bg-orange-100 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400",
-                  stat.color === "green" && "bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400"
-                )}>
+                <div
+                  className={cx(
+                    "rounded-lg p-2",
+                    stat.color === "indigo" &&
+                      "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400",
+                    stat.color === "purple" &&
+                      "bg-purple-100 text-purple-600 dark:bg-purple-900/20 dark:text-purple-400",
+                    stat.color === "orange" &&
+                      "bg-orange-100 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400",
+                    stat.color === "green" &&
+                      "bg-green-100 text-green-600 dark:bg-green-900/20 dark:text-green-400",
+                  )}
+                >
                   <Icon className="h-5 w-5" />
                 </div>
               </div>
@@ -123,7 +139,10 @@ export function MarketOverview({ className }: MarketOverviewProps) {
           </h3>
           <div className="space-y-3">
             {topMovers.gainers.map((asset) => (
-              <div key={asset.symbol} className="flex items-center justify-between">
+              <div
+                key={asset.symbol}
+                className="flex items-center justify-between"
+              >
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-full bg-green-100 dark:bg-green-900/20" />
                   <div>
@@ -136,12 +155,17 @@ export function MarketOverview({ className }: MarketOverviewProps) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className={cx(
-                    "font-medium text-mono tabular-nums",
-                    getPriceDirection(asset.symbol).direction === 'up' && "text-green-600 dark:text-green-400",
-                    getPriceDirection(asset.symbol).direction === 'down' && "text-red-600 dark:text-red-400",
-                    getPriceDirection(asset.symbol).direction === 'none' && "text-gray-900 dark:text-gray-50"
-                  )}>
+                  <p
+                    className={cx(
+                      "text-mono font-medium tabular-nums",
+                      getPriceDirection(asset.symbol).direction === "up" &&
+                        "text-green-600 dark:text-green-400",
+                      getPriceDirection(asset.symbol).direction === "down" &&
+                        "text-red-600 dark:text-red-400",
+                      getPriceDirection(asset.symbol).direction === "none" &&
+                        "text-gray-900 dark:text-gray-50",
+                    )}
+                  >
                     ${formatPrice(asset.price)}
                   </p>
                   <p className="text-sm text-green-600 dark:text-green-400">
@@ -161,7 +185,10 @@ export function MarketOverview({ className }: MarketOverviewProps) {
           </h3>
           <div className="space-y-3">
             {topMovers.losers.map((asset) => (
-              <div key={asset.symbol} className="flex items-center justify-between">
+              <div
+                key={asset.symbol}
+                className="flex items-center justify-between"
+              >
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-full bg-red-100 dark:bg-red-900/20" />
                   <div>
@@ -174,12 +201,17 @@ export function MarketOverview({ className }: MarketOverviewProps) {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className={cx(
-                    "font-medium text-mono tabular-nums",
-                    getPriceDirection(asset.symbol).direction === 'up' && "text-green-600 dark:text-green-400",
-                    getPriceDirection(asset.symbol).direction === 'down' && "text-red-600 dark:text-red-400",
-                    getPriceDirection(asset.symbol).direction === 'none' && "text-gray-900 dark:text-gray-50"
-                  )}>
+                  <p
+                    className={cx(
+                      "text-mono font-medium tabular-nums",
+                      getPriceDirection(asset.symbol).direction === "up" &&
+                        "text-green-600 dark:text-green-400",
+                      getPriceDirection(asset.symbol).direction === "down" &&
+                        "text-red-600 dark:text-red-400",
+                      getPriceDirection(asset.symbol).direction === "none" &&
+                        "text-gray-900 dark:text-gray-50",
+                    )}
+                  >
                     ${formatPrice(asset.price)}
                   </p>
                   <p className="text-sm text-red-600 dark:text-red-400">
@@ -199,9 +231,15 @@ export function MarketOverview({ className }: MarketOverviewProps) {
         </h3>
         <div className="space-y-3">
           {(() => {
-            const bullish = cryptoAssets.filter(a => a.change24hPercent > 0).length
-            const bearish = cryptoAssets.filter(a => a.change24hPercent < 0).length
-            const neutral = cryptoAssets.filter(a => a.change24hPercent === 0).length
+            const bullish = cryptoAssets.filter(
+              (a) => a.change24hPercent > 0,
+            ).length
+            const bearish = cryptoAssets.filter(
+              (a) => a.change24hPercent < 0,
+            ).length
+            const neutral = cryptoAssets.filter(
+              (a) => a.change24hPercent === 0,
+            ).length
             const total = cryptoAssets.length
 
             return (
@@ -215,7 +253,10 @@ export function MarketOverview({ className }: MarketOverviewProps) {
                       {((bullish / total) * 100).toFixed(1)}%
                     </span>
                   </div>
-                  <ProgressBar value={(bullish / total) * 100} className="bg-green-600" />
+                  <ProgressBar
+                    value={(bullish / total) * 100}
+                    className="bg-green-600"
+                  />
                 </div>
                 <div>
                   <div className="mb-1 flex justify-between text-sm">
@@ -226,7 +267,10 @@ export function MarketOverview({ className }: MarketOverviewProps) {
                       {((bearish / total) * 100).toFixed(1)}%
                     </span>
                   </div>
-                  <ProgressBar value={(bearish / total) * 100} className="bg-red-600" />
+                  <ProgressBar
+                    value={(bearish / total) * 100}
+                    className="bg-red-600"
+                  />
                 </div>
                 {neutral > 0 && (
                   <div>
@@ -238,7 +282,10 @@ export function MarketOverview({ className }: MarketOverviewProps) {
                         {((neutral / total) * 100).toFixed(1)}%
                       </span>
                     </div>
-                    <ProgressBar value={(neutral / total) * 100} className="bg-gray-600" />
+                    <ProgressBar
+                      value={(neutral / total) * 100}
+                      className="bg-gray-600"
+                    />
                   </div>
                 )}
               </>

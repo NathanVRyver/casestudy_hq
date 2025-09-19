@@ -1,4 +1,4 @@
-import { CryptoAsset, Binance24hrTickerStream, SYMBOL_MAP, TimeFrame } from "@/types/crypto"
+import { CryptoAsset, Binance24hrTickerStream, SYMBOL_MAP } from "@/types/crypto"
 
 const BINANCE_API_BASE = "https://api.binance.com/api/v3"
 
@@ -41,52 +41,6 @@ export class CryptoAPIService {
     }
   }
 
-  async getKlines(symbol: string, interval: TimeFrame, limit = 100): Promise<number[][]> {
-    const cacheKey = `klines_${symbol}_${interval}_${limit}`
-    const cached = this.getCached<number[][]>(cacheKey)
-    if (cached) return cached
-
-    try {
-      const response = await fetch(
-        `${BINANCE_API_BASE}/klines?symbol=${symbol}&interval=${interval}&limit=${limit}`
-      )
-      if (!response.ok) throw new Error("Failed to fetch klines")
-      
-      const data = await response.json()
-      const klines = data.map((k: any[]) => [
-        k[0], // Open time
-        parseFloat(k[1]), // Open
-        parseFloat(k[2]), // High
-        parseFloat(k[3]), // Low
-        parseFloat(k[4]), // Close
-        parseFloat(k[5]), // Volume
-      ])
-      
-      this.setCache(cacheKey, klines)
-      return klines
-    } catch (error) {
-      console.error("Error fetching klines:", error)
-      return []
-    }
-  }
-
-  async searchSymbols(query: string): Promise<CryptoAsset[]> {
-    try {
-      const tickers = await this.get24hrTickers()
-      const searchTerm = query.toUpperCase()
-      
-      const filtered = tickers.filter((ticker: any) => {
-        const symbol = ticker.symbol.replace("USDT", "")
-        const name = SYMBOL_MAP[ticker.symbol] || symbol
-        return symbol.includes(searchTerm) || name.toUpperCase().includes(searchTerm)
-      })
-
-      return this.transformTickersToAssets(filtered)
-    } catch (error) {
-      console.error("Error searching symbols:", error)
-      return []
-    }
-  }
 
   transformTickersToAssets(tickers: any[]): CryptoAsset[] {
     return tickers.map((ticker, index) => ({

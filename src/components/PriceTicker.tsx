@@ -22,19 +22,20 @@ export function PriceTicker({ assets, className }: PriceTickerProps) {
             className="hover:bg-stone-150 dark:hover:bg-stone-750 flex items-center gap-3 rounded-lg border border-stone-200 bg-stone-100 px-4 py-2 transition-all duration-200 dark:border-stone-700 dark:bg-stone-800"
           >
             <div className="flex items-center gap-3">
-              <span className="text-mono text-sm font-semibold tracking-tight text-stone-900 dark:text-stone-50">
+              <span className="text-mono font-semibold tracking-tight text-stone-900 dark:text-stone-50">
                 {asset.symbol}
               </span>
               <span
                 className={cx(
                   "text-mono font-semibold tabular-nums",
-                  getPriceDirection(asset.symbol).direction === 'up' && "text-green-600 dark:text-green-400",
-                  getPriceDirection(asset.symbol).direction === 'down' && "text-red-600 dark:text-red-400",
-                  getPriceDirection(asset.symbol).direction === 'none' && (
-                    asset.change24hPercent >= 0
+                  getPriceDirection(asset.symbol).direction === "up" &&
+                    "text-green-600 dark:text-green-400",
+                  getPriceDirection(asset.symbol).direction === "down" &&
+                    "text-red-600 dark:text-red-400",
+                  getPriceDirection(asset.symbol).direction === "none" &&
+                    (asset.change24hPercent >= 0
                       ? "text-green-600 dark:text-green-400"
-                      : "text-red-600 dark:text-red-400"
-                  )
+                      : "text-red-600 dark:text-red-400"),
                 )}
               >
                 ${formatPrice(asset.price)}
@@ -44,8 +45,8 @@ export function PriceTicker({ assets, className }: PriceTickerProps) {
             <div
               className={cx(
                 "text-mono flex items-center gap-1 font-medium tabular-nums",
-                asset.change24hPercent >= 0 
-                  ? "text-green-600 dark:text-green-400" 
+                asset.change24hPercent >= 0
+                  ? "text-green-600 dark:text-green-400"
                   : "text-red-600 dark:text-red-400",
               )}
             >

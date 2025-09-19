@@ -25,7 +25,6 @@ export default function DashboardPage() {
     highVolume,
     trending,
     isLoading,
-    isConnected,
     searchQuery,
     setSearchQuery,
     filteredAssets,
@@ -38,26 +37,26 @@ export default function DashboardPage() {
 
   const [activeTab, setActiveTab] = useState<TabCategory>("trending")
   const [showOverview, setShowOverview] = useState(false)
-  
+
   // Lock the order of assets on first load for each tab
   const lockedPositions = useRef<Record<TabCategory, string[]>>({
     trending: [],
     gainers: [],
     losers: [],
     volume: [],
-    all: []
+    all: [],
   })
-  
+
   // Initialize locked positions once when data first loads
   useEffect(() => {
     if (!isLoading && topAssets.length > 0) {
       if (lockedPositions.current.trending.length === 0) {
         lockedPositions.current = {
-          trending: trending.map(a => a.symbol),
-          gainers: topGainers.map(a => a.symbol),
-          losers: topLosers.map(a => a.symbol),
-          volume: highVolume.map(a => a.symbol),
-          all: topAssets.map(a => a.symbol)
+          trending: trending.map((a) => a.symbol),
+          gainers: topGainers.map((a) => a.symbol),
+          losers: topLosers.map((a) => a.symbol),
+          volume: highVolume.map((a) => a.symbol),
+          all: topAssets.map((a) => a.symbol),
         }
       }
     }
@@ -74,10 +73,10 @@ export default function DashboardPage() {
   // Get the right assets based on active tab with locked positions
   const displayedAssets = useMemo(() => {
     if (searchQuery) return filteredAssets
-    
+
     // Get the locked order for current tab
     const lockedOrder = lockedPositions.current[activeTab] || []
-    
+
     // Get the current data based on tab
     let currentData: CryptoAsset[] = []
     switch (activeTab) {
@@ -99,12 +98,12 @@ export default function DashboardPage() {
       default:
         currentData = topAssets
     }
-    
+
     // If we have locked positions, sort the current data to match the locked order
     if (lockedOrder.length > 0) {
-      const dataMap = new Map(currentData.map(asset => [asset.symbol, asset]))
+      const dataMap = new Map(currentData.map((asset) => [asset.symbol, asset]))
       const sortedAssets: CryptoAsset[] = []
-      
+
       // Add assets in the locked order
       for (const symbol of lockedOrder) {
         const asset = dataMap.get(symbol)
@@ -112,21 +111,30 @@ export default function DashboardPage() {
           sortedAssets.push(asset)
         }
       }
-      
+
       return sortedAssets
     }
-    
+
     // If no locked positions yet, return current data as-is
     return currentData
-  }, [activeTab, topAssets, topGainers, topLosers, highVolume, trending, filteredAssets, searchQuery])
+  }, [
+    activeTab,
+    topAssets,
+    topGainers,
+    topLosers,
+    highVolume,
+    trending,
+    filteredAssets,
+    searchQuery,
+  ])
 
   return (
-    <div className="min-h-screen bg-cream bg-texture dark:bg-stone-950 page-transition">
+    <div className="bg-cream bg-texture page-transition min-h-screen dark:bg-stone-950">
       {/* Header - shows overview toggle */}
-      <div className="sticky top-16 lg:top-0 z-30 border-b border-stone-200 bg-cream/95 backdrop-blur-sm dark:border-stone-800 dark:bg-stone-950/95">
+      <div className="bg-cream/95 sticky top-16 z-30 border-b border-stone-200 backdrop-blur-sm lg:top-0 dark:border-stone-800 dark:bg-stone-950/95">
         <div className="px-4 sm:px-6 lg:px-8">
-          <div className="flex h-12 lg:h-16 items-center justify-between lg:justify-end">
-            <h2 className="text-display text-lg font-semibold text-stone-900 dark:text-stone-50 lg:hidden">
+          <div className="flex h-12 items-center justify-between lg:h-16 lg:justify-end">
+            <h2 className="text-display text-lg font-semibold text-stone-900 lg:hidden dark:text-stone-50">
               Dashboard
             </h2>
             <div className="flex items-center gap-4">
@@ -206,7 +214,7 @@ export default function DashboardPage() {
             {displayedAssets.map((asset) => (
               <Card
                 key={asset.symbol}
-                className="group relative overflow-hidden animate-fade-in-up"
+                className="animate-fade-in-up group relative overflow-hidden"
                 style={{
                   animationDelay: `${displayedAssets.indexOf(asset) * 50}ms`,
                 }}
@@ -214,10 +222,10 @@ export default function DashboardPage() {
                 <div className="p-4">
                   <div className="mb-3 flex items-start justify-between">
                     <div>
-                      <h3 className="text-mono font-semibold text-stone-900 dark:text-stone-50 tracking-tight">
+                      <h3 className="text-mono font-semibold tracking-tight text-stone-900 dark:text-stone-50">
                         {asset.symbol}
                       </h3>
-                      <p className="text-mono text-sm text-stone-500 dark:text-stone-400 tracking-tight">
+                      <p className="text-mono tracking-tight text-stone-500 dark:text-stone-400">
                         {asset.name}
                       </p>
                     </div>
@@ -240,17 +248,20 @@ export default function DashboardPage() {
                     <div>
                       <p
                         className={cx(
-                          "text-2xl font-bold text-mono tabular-nums",
-                          getPriceDirection(asset.symbol).direction === 'up' && "text-green-600 dark:text-green-400",
-                          getPriceDirection(asset.symbol).direction === 'down' && "text-red-600 dark:text-red-400",
-                          getPriceDirection(asset.symbol).direction === 'none' && "text-stone-900 dark:text-stone-50"
+                          "text-mono font-bold tabular-nums",
+                          getPriceDirection(asset.symbol).direction === "up" &&
+                            "text-green-600 dark:text-green-400",
+                          getPriceDirection(asset.symbol).direction ===
+                            "down" && "text-red-600 dark:text-red-400",
+                          getPriceDirection(asset.symbol).direction ===
+                            "none" && "text-stone-900 dark:text-stone-50",
                         )}
                       >
                         ${formatPrice(asset.price)}
                       </p>
                       <p
                         className={cx(
-                          "text-sm text-mono tabular-nums",
+                          "text-mono tabular-nums",
                           asset.change24h >= 0
                             ? "text-green-600 dark:text-green-400"
                             : "text-red-600 dark:text-red-400",
@@ -261,20 +272,20 @@ export default function DashboardPage() {
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 border-t border-stone-200 dark:border-stone-700 pt-3 mt-3">
+                    <div className="mt-3 grid grid-cols-2 gap-2 border-t border-stone-200 pt-3 dark:border-stone-700">
                       <div>
-                        <p className="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wide">
+                        <p className="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">
                           24h Volume
                         </p>
-                        <p className=" text-mono font-medium text-stone-900 dark:text-stone-50 tabular-nums">
+                        <p className="text-mono font-medium tabular-nums text-stone-900 dark:text-stone-50">
                           {formatVolume(asset.volume24h)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wide">
+                        <p className="text-xs uppercase tracking-wide text-stone-500 dark:text-stone-400">
                           24h Range
                         </p>
-                        <p className="text-sm text-mono font-medium text-stone-900 dark:text-stone-50 tabular-nums">
+                        <p className="text-mono font-medium tabular-nums text-stone-900 dark:text-stone-50">
                           ${formatPrice(asset.low24h)} - $
                           {formatPrice(asset.high24h)}
                         </p>

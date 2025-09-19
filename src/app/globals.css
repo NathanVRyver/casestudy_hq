@@ -119,30 +119,6 @@ body {
     transform: translateY(-1px);
   }
   
-  /* Price Direction Indicators with Smooth Transitions */
-  .price-direction {
-    transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-  
-  .price-direction-up {
-    color: rgb(22 163 74); /* green-600 */
-  }
-  
-  .price-direction-down {
-    color: rgb(220 38 38); /* red-600 */
-  }
-  
-  .price-direction-none {
-    color: inherit;
-  }
-  
-  .dark .price-direction-up {
-    color: rgb(74 222 128); /* green-400 */
-  }
-  
-  .dark .price-direction-down {
-    color: rgb(248 113 113); /* red-400 */
-  }
   
   .mono-input {
     background: rgb(var(--input));
@@ -163,10 +139,6 @@ body {
     color: rgb(var(--muted-foreground));
   }
   
-  .loading-skeleton {
-    background: rgb(var(--muted));
-    border-radius: 0.25rem;
-  }
   
   /* Typography Styles */
   .text-display {
@@ -187,30 +159,6 @@ body {
 }
 
 /* Keyframe Animations */
-@keyframes priceFlashUp {
-  0% {
-    background-color: rgba(22, 163, 74, 0.15);
-  }
-  50% {
-    background-color: rgba(22, 163, 74, 0.1);
-  }
-  100% {
-    background-color: transparent;
-  }
-}
-
-@keyframes priceFlashDown {
-  0% {
-    background-color: rgba(220, 38, 38, 0.15);
-  }
-  50% {
-    background-color: rgba(220, 38, 38, 0.1);
-  }
-  100% {
-    background-color: transparent;
-  }
-}
-
 @keyframes fadeInUp {
   from {
     opacity: 0;

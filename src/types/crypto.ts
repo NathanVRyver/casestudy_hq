@@ -26,42 +26,6 @@ export interface Binance24hrTickerStream {
   n: number     // Total number of trades
 }
 
-export interface BinanceMiniTickerStream {
-  e: string     // Event type: "24hrMiniTicker"
-  E: number     // Event time
-  s: string     // Symbol
-  c: string     // Close price
-  o: string     // Open price
-  h: string     // High price
-  l: string     // Low price
-  v: string     // Total traded base asset volume
-  q: string     // Total traded quote asset volume
-}
-
-export interface BinanceKlineStream {
-  e: string     // Event type: "kline"
-  E: number     // Event time
-  s: string     // Symbol
-  k: {
-    t: number   // Kline start time
-    T: number   // Kline close time
-    s: string   // Symbol
-    i: string   // Interval
-    f: number   // First trade ID
-    L: number   // Last trade ID
-    o: string   // Open price
-    c: string   // Close price
-    h: string   // High price
-    l: string   // Low price
-    v: string   // Base asset volume
-    n: number   // Number of trades
-    x: boolean  // Is this kline closed?
-    q: string   // Quote asset volume
-    V: string   // Taker buy base asset volume
-    Q: string   // Taker buy quote asset volume
-    B: string   // Ignore
-  }
-}
 
 // Transformed data for UI display
 export interface CryptoAsset {
@@ -86,7 +50,6 @@ export interface MarketStats {
   activeCoins: number
 }
 
-export type TimeFrame = "1m" | "5m" | "15m" | "30m" | "1h" | "4h" | "1d" | "1w"
 export type TabCategory = "trending" | "gainers" | "losers" | "volume" | "all"
 
 // Symbol mapping for common cryptocurrencies

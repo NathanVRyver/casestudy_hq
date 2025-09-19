@@ -19,7 +19,6 @@ import { useCrypto } from "@/contexts/CryptoContext"
 import { cx, focusRing } from "@/lib/utils"
 import {
   RiComputerLine,
-  RiDashboardLine,
   RiLoginBoxLine,
   RiLogoutBoxLine,
   RiMoonLine,
@@ -166,7 +165,7 @@ function UserProfile() {
       >
         <span className="flex items-center gap-3">
           <span
-            className="flex size-8 shrink-0 items-center justify-center rounded-full border border-stone-300 bg-cream text-xs text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300 font-mono font-medium"
+            className="bg-cream flex size-8 shrink-0 items-center justify-center rounded-full border border-stone-300 font-mono text-xs font-medium text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300"
             aria-hidden="true"
           >
             {initials}
@@ -174,7 +173,7 @@ function UserProfile() {
           <span className="truncate">{displayName}</span>
         </span>
         <RiMore2Fill
-          className="size-4 shrink-0 text-stone-500 group-hover:text-stone-700 group-hover:dark:text-stone-400 transition-colors duration-200"
+          className="size-4 shrink-0 text-stone-500 transition-colors duration-200 group-hover:text-stone-700 group-hover:dark:text-stone-400"
           aria-hidden="true"
         />
       </Button>
@@ -189,10 +188,10 @@ export function CryptoSidebar() {
     <>
       {/* Desktop Sidebar */}
       <nav className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <aside className="flex grow flex-col gap-y-6 overflow-y-auto border-r border-stone-200 bg-cream p-4 dark:border-stone-800 dark:bg-stone-950 bg-texture">
+        <aside className="bg-cream bg-texture flex grow flex-col gap-y-6 overflow-y-auto border-r border-stone-200 p-4 dark:border-stone-800 dark:bg-stone-950">
           {/* App Logo/Title */}
           <div className="flex items-center">
-            <h1 className="text-display text-2xl font-semibold text-stone-900 dark:text-stone-50 tracking-tight">
+            <h1 className="text-display text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
               AthenaCrypto
             </h1>
           </div>
@@ -205,9 +204,9 @@ export function CryptoSidebar() {
       </nav>
 
       {/* Mobile Header */}
-      <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-stone-200 bg-cream/95 backdrop-blur-sm px-4 shadow-soft lg:hidden dark:border-stone-800 dark:bg-stone-950/95">
+      <div className="bg-cream/95 shadow-soft sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-stone-200 px-4 backdrop-blur-sm lg:hidden dark:border-stone-800 dark:bg-stone-950/95">
         <div className="flex items-center">
-          <h1 className="text-display text-xl font-semibold text-stone-900 dark:text-stone-50 tracking-tight">
+          <h1 className="text-display text-xl font-semibold tracking-tight text-stone-900 dark:text-stone-50">
             AthenaCrypto
           </h1>
         </div>
@@ -215,9 +214,9 @@ export function CryptoSidebar() {
         <div className="flex items-center gap-2">
           {/* Connection status for mobile */}
           {isConnected ? (
-            <RiWifiLine className="size-5 text-profit" />
+            <RiWifiLine className="text-profit size-5" />
           ) : (
-            <RiWifiOffLine className="size-5 text-loss" />
+            <RiWifiOffLine className="text-loss size-5" />
           )}
 
           {/* Mobile User Profile */}
@@ -225,10 +224,10 @@ export function CryptoSidebar() {
             <Button
               aria-label="User settings"
               variant="ghost"
-              className="group flex items-center rounded-md p-1 text-sm font-medium text-stone-900 hover:bg-stone-100 data-[state=open]:bg-stone-100 dark:text-stone-50 dark:hover:bg-stone-800 dark:data-[state=open]:bg-stone-800 transition-colors duration-200"
+              className="group flex items-center rounded-md p-1 text-sm font-medium text-stone-900 transition-colors duration-200 hover:bg-stone-100 data-[state=open]:bg-stone-100 dark:text-stone-50 dark:hover:bg-stone-800 dark:data-[state=open]:bg-stone-800"
             >
               <span
-                className="flex size-7 shrink-0 items-center justify-center rounded-full border border-stone-300 bg-cream text-xs text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300 font-mono font-medium"
+                className="bg-cream flex size-7 shrink-0 items-center justify-center rounded-full border border-stone-300 font-mono text-xs font-medium text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300"
                 aria-hidden="true"
               >
                 {(() => {
