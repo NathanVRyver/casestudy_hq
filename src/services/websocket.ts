@@ -17,10 +17,10 @@ class BinanceWebSocketService {
   private reconnectDelay = 1000
   private currentEndpointIndex = 0
   private endpoints = [
-    'wss://stream.binance.com:9443',
-    'wss://stream.binance.us:9443',
-    'wss://stream.binance.com:443',
-    'wss://data-stream.binance.com:9443'
+    'wss://stream.binance.com:9443',      // Try international first (most coins)
+    'wss://stream.binance.com:443',       // Alternative port for international
+    'wss://data-stream.binance.com:9443', // Alternative domain
+    'wss://stream.binance.us:9443',       // US fallback (fewer coins but works in US)
   ]
 
   connect(streams: string[]) {

@@ -5,15 +5,17 @@ import {
 } from "@/types/crypto"
 
 const API_ENDPOINTS = [
-  "https://api.binance.com/api/v3",
-  "https://api.binance.us/api/v3",
-  "https://api1.binance.com/api/v3",
-  "https://api2.binance.com/api/v3",
+  "https://api.binance.com/api/v3", // Try international first (most coins)
+  "https://api1.binance.com/api/v3", // Alternative international endpoint
+  "https://api2.binance.com/api/v3", // Another alternative
+  "https://api.binance.us/api/v3", // US fallback (fewer coins but works in US)
 ]
 
+const globalCache: Map<string, { data: any; timestamp: number }> = new Map()
+
 export class CryptoAPIService {
-  private cache: Map<string, { data: any; timestamp: number }> = new Map()
-  private cacheTimeout = 60000 // 1 minute cache
+  private cache = globalCache
+  private cacheTimeout = 60000
   private currentEndpointIndex = 0
 
   private getCached<T>(key: string): T | null {
@@ -31,7 +33,15 @@ export class CryptoAPIService {
   async get24hrTickers(): Promise<Binance24hrTickerStream[]> {
     const cacheKey = "24hrTickers"
     const cached = this.getCached<Binance24hrTickerStream[]>(cacheKey)
-    if (cached) return cached
+    if (cached && cached.length > 0) {
+      console.log(`Using cached data with ${cached.length} pairs`)
+      return cached
+    }
+
+    // Try to fetch from multiple endpoints and merge results for best coverage
+    let allTickers: Map<string, any> = new Map()
+    let successfulFetch = false
+    let lastSuccessfulEndpoint = ""
 
     for (let i = 0; i < API_ENDPOINTS.length; i++) {
       const endpointIndex =
@@ -45,30 +55,72 @@ export class CryptoAPIService {
         })
 
         if (!response.ok) {
-          console.warn(`Failed to fetch from ${endpoint}, trying next...`)
+          console.warn(
+            `Failed to fetch from ${endpoint}, status: ${response.status}`,
+          )
           continue
         }
 
         const data = await response.json()
-        const usdtPairs = data.filter(
-          (ticker: any) =>
-            ticker.symbol.endsWith("USDT") &&
-            parseFloat(ticker.quoteVolume) > 100000, // Use quote volume (USDT) instead of base volume
+
+        // Add all USDT pairs to our map (deduplicates automatically)
+        data.forEach((ticker: any) => {
+          if (ticker.symbol.endsWith("USDT")) {
+            const volume = parseFloat(
+              ticker.quoteVolume || ticker.volume || "0",
+            )
+            // Very low threshold to include all coins, we'll filter client-side if needed
+            if (volume > 100) {
+              allTickers.set(ticker.symbol, ticker)
+            }
+          }
+        })
+
+        successfulFetch = true
+        lastSuccessfulEndpoint = endpoint
+        this.currentEndpointIndex = endpointIndex
+        console.log(
+          `Successfully fetched ${data.length} pairs from ${endpoint}, filtered to ${allTickers.size} USDT pairs`,
         )
 
-        // Remember which endpoint worked
-        this.currentEndpointIndex = endpointIndex
-        console.log(`Successfully fetched from ${endpoint}`)
-
-        this.setCache(cacheKey, usdtPairs)
-        return usdtPairs
-      } catch (error) {
-        console.error(`Error fetching from ${endpoint}:`, error)
+        // If we got a good amount of data from Binance.com, use it
+        // Otherwise continue to try more endpoints to get better coverage
+        if (
+          allTickers.size > 200 &&
+          endpoint.includes("binance.com") &&
+          !endpoint.includes("binance.us")
+        ) {
+          break
+        }
+        // If we're on Binance.US and got data, that's good enough for US users
+        if (allTickers.size > 100 && endpoint.includes("binance.us")) {
+          break
+        }
+      } catch (error: any) {
+        console.error(
+          `Error fetching from ${endpoint}:`,
+          error.message || error,
+        )
       }
     }
 
-    console.error("Failed to fetch from all endpoints")
-    return []
+    if (!successfulFetch || allTickers.size === 0) {
+      console.error("Failed to fetch from all endpoints, returning empty array")
+      // Don't cache empty results
+      return []
+    }
+
+    const usdtPairs = Array.from(allTickers.values())
+    console.log(
+      `Total unique pairs collected: ${usdtPairs.length} from ${lastSuccessfulEndpoint}`,
+    )
+
+    // Only cache if we got meaningful data
+    if (usdtPairs.length > 0) {
+      this.setCache(cacheKey, usdtPairs)
+    }
+
+    return usdtPairs
   }
 
   transformTickersToAssets(tickers: any[]): CryptoAsset[] {
