@@ -23,46 +23,30 @@ export function MarketOverview({ className }: MarketOverviewProps) {
     topGainers,
     topLosers,
     formatPrice,
+    formatVolume,
+    formatChange,
     getPriceDirection,
   } = useCrypto()
 
-  const formatValue = (
-    value: number,
-    type: "currency" | "percent" | "number",
-  ): string => {
-    switch (type) {
-      case "currency":
-        if (value >= 1e12) return `$${(value / 1e12).toFixed(2)}T`
-        if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`
-        if (value >= 1e6) return `$${(value / 1e6).toFixed(2)}M`
-        return `$${value.toFixed(2)}`
-      case "percent":
-        return `${value.toFixed(2)}%`
-      case "number":
-        return value.toLocaleString()
-      default:
-        return value.toString()
-    }
-  }
 
   const statCards = [
     {
       title: "Market Cap",
-      value: formatValue(marketStats.totalMarketCap, "currency"),
+      value: formatVolume(marketStats.totalMarketCap),
       change: marketStats.marketChange24h,
       icon: RiStockLine,
       color: "indigo",
     },
     {
       title: "24h Volume",
-      value: formatValue(marketStats.totalVolume24h, "currency"),
+      value: formatVolume(marketStats.totalVolume24h),
       change: 0,
       icon: RiExchangeDollarLine,
       color: "purple",
     },
     {
       title: "Active Coins",
-      value: marketStats.activeCoins.toString(),
+      value: marketStats.activeCoins.toLocaleString(),
       change: 0,
       icon: RiCoinLine,
       color: "green",
