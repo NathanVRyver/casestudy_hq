@@ -37,6 +37,7 @@ interface CryptoContextType {
   // Utils
   formatPrice: (price: number) => string
   formatVolume: (volume: number) => string
+  formatChange: (change: number) => string
   isPriceChanging: (symbol: string) => 'up' | 'down' | 'none'
   isRecentlyUpdated: (symbol: string) => boolean
 }
@@ -189,13 +190,25 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
     activeCoins: cryptoAssets.length
   }
 
-  // Utility functions
-  const formatPrice = (price: number): string => price.toFixed(4)
+  // Utility functions - max precision for crypto
+  const formatPrice = (price: number): string => {
+    // For very small numbers, show up to 8 decimal places
+    if (price < 0.00001) return price.toFixed(8)
+    if (price < 0.0001) return price.toFixed(6)
+    if (price < 0.01) return price.toFixed(5)
+    if (price < 1) return price.toFixed(4)
+    if (price < 100) return price.toFixed(3)
+    if (price < 10000) return price.toFixed(2)
+    return price.toFixed(2)
+  }
   
   const formatVolume = (volume: number): string => {
-    if (volume >= 1e9) return `$${(volume / 1e9).toFixed(2)}B`
-    if (volume >= 1e6) return `$${(volume / 1e6).toFixed(2)}M`
-    if (volume >= 1e3) return `$${(volume / 1e3).toFixed(2)}K`
+    if (volume >= 1e9) return `$${(volume / 1e9).toFixed(3)}B`
+    if (volume >= 1e6) return `$${(volume / 1e6).toFixed(3)}M`
+    if (volume >= 1e3) return `$${(volume / 1e3).toFixed(3)}K`
+    // For small volumes, show actual value with proper decimals
+    if (volume < 1) return `$${volume.toFixed(4)}`
+    if (volume < 100) return `$${volume.toFixed(2)}`
     return `$${volume.toFixed(2)}`
   }
 
@@ -209,6 +222,16 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
     const asset = cryptoAssets.find(a => a.symbol === symbol)
     if (!asset) return false
     return Date.now() - asset.lastUpdate < 3000
+  }
+  
+  const formatChange = (change: number): string => {
+    // Format price changes with appropriate precision
+    if (Math.abs(change) < 0.00001) return change.toFixed(8)
+    if (Math.abs(change) < 0.0001) return change.toFixed(6)
+    if (Math.abs(change) < 0.01) return change.toFixed(5)
+    if (Math.abs(change) < 1) return change.toFixed(4)
+    if (Math.abs(change) < 100) return change.toFixed(3)
+    return change.toFixed(2)
   }
 
   const contextValue: CryptoContextType = {
@@ -238,6 +261,7 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
     // Utils
     formatPrice,
     formatVolume,
+    formatChange,
     isPriceChanging,
     isRecentlyUpdated,
   }

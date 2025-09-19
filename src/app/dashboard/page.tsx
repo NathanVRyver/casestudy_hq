@@ -32,6 +32,7 @@ export default function DashboardPage() {
     filteredAssets,
     formatPrice,
     formatVolume,
+    formatChange,
     isPriceChanging,
     isRecentlyUpdated,
   } = useCrypto()
@@ -256,7 +257,7 @@ export default function DashboardPage() {
                         )}
                       >
                         {asset.change24h >= 0 ? "+" : ""}$
-                        {Math.abs(asset.change24h).toFixed(2)}
+                        {formatChange(Math.abs(asset.change24h))}
                       </p>
                     </div>
 
