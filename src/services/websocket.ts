@@ -15,6 +15,13 @@ class BinanceWebSocketService {
   private reconnectAttempts = 0
   private maxReconnectAttempts = 5
   private reconnectDelay = 1000
+  private currentEndpointIndex = 0
+  private endpoints = [
+    'wss://stream.binance.com:9443',
+    'wss://stream.binance.us:9443',
+    'wss://stream.binance.com:443',
+    'wss://data-stream.binance.com:9443'
+  ]
 
   connect(streams: string[]) {
     if (
@@ -28,18 +35,22 @@ class BinanceWebSocketService {
     this.streams = streams
     this.isConnecting = true
 
+    const baseUrl = this.endpoints[this.currentEndpointIndex]
     const streamUrl =
       streams.length === 1
-        ? `wss://stream.binance.com:9443/ws/${streams[0]}`
-        : `wss://stream.binance.com:9443/stream?streams=${streams.join("/")}`
+        ? `${baseUrl}/ws/${streams[0]}`
+        : `${baseUrl}/stream?streams=${streams.join("/")}`
 
     try {
       this.ws = new WebSocket(streamUrl)
 
       this.ws.onopen = () => {
-        console.log("WebSocket connected to Binance")
+        console.log(`WebSocket connected to ${this.endpoints[this.currentEndpointIndex]}`)
         this.isConnecting = false
         this.reconnectAttempts = 0
+        if (this.currentEndpointIndex !== 0) {
+          console.log("Successfully connected to fallback endpoint")
+        }
         this.connectionHandlers.forEach((handler) => handler())
         this.setupPing()
       }
@@ -54,16 +65,23 @@ class BinanceWebSocketService {
       }
 
       this.ws.onerror = (error) => {
-        console.error("WebSocket error:", error)
+        console.error(`WebSocket error on ${this.endpoints[this.currentEndpointIndex]}:`, error)
         this.errorHandlers.forEach((handler) => handler(error))
       }
 
       this.ws.onclose = () => {
-        console.log("WebSocket disconnected")
+        console.log(`WebSocket disconnected from ${this.endpoints[this.currentEndpointIndex]}`)
         this.isConnecting = false
         this.cleanup()
         this.disconnectionHandlers.forEach((handler) => handler())
-        this.scheduleReconnect()
+        
+        if (this.reconnectAttempts === 0 && this.currentEndpointIndex < this.endpoints.length - 1) {
+          this.currentEndpointIndex++
+          console.log(`Trying next endpoint: ${this.endpoints[this.currentEndpointIndex]}`)
+          this.connect(this.streams)
+        } else {
+          this.scheduleReconnect()
+        }
       }
     } catch (error) {
       console.error("Error creating WebSocket:", error)
@@ -83,6 +101,7 @@ class BinanceWebSocketService {
   private scheduleReconnect() {
     if (this.reconnectAttempts >= this.maxReconnectAttempts) {
       console.error("Max reconnection attempts reached")
+      this.currentEndpointIndex = 0
       return
     }
 
@@ -94,6 +113,9 @@ class BinanceWebSocketService {
     this.reconnectTimeout = setTimeout(() => {
       this.reconnectAttempts++
       console.log(`Reconnecting... Attempt ${this.reconnectAttempts}`)
+      if (this.reconnectAttempts === 1) {
+        this.currentEndpointIndex = 0
+      }
       this.connect(this.streams)
     }, delay)
   }
