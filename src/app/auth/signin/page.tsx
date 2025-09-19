@@ -1,6 +1,6 @@
 "use client"
 
-import { RiEyeLine, RiEyeOffLine, RiMoonLine, RiSunLine } from "@remixicon/react"
+import { RiEyeLine, RiEyeOffLine, RiMoonLine, RiSunLine, RiLoader2Fill } from "@remixicon/react"
 import { signIn } from "next-auth/react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useState, Suspense, useEffect } from "react"
@@ -150,8 +150,11 @@ function SignInForm() {
             <button
               type="submit"
               disabled={isLoading}
-              className="mono-button-primary w-full"
+              className="mono-button-primary w-full flex items-center justify-center gap-2"
             >
+              {isLoading && (
+                <RiLoader2Fill className="h-4 w-4 animate-spin" />
+              )}
               {isLoading ? "Signing in..." : "Sign in"}
             </button>
           </form>
