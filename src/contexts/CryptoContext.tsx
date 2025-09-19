@@ -244,10 +244,19 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
       }
 
       const searchTerm = searchQuery.toUpperCase()
-      const results = cryptoAssets.filter(asset => 
-        asset.symbol.includes(searchTerm) || 
-        asset.name.toUpperCase().includes(searchTerm)
+      
+      const exactMatches = cryptoAssets.filter(asset => 
+        asset.symbol === searchTerm
       )
+      
+      const partialMatches = cryptoAssets.filter(asset => 
+        asset.symbol !== searchTerm && (
+          asset.symbol.includes(searchTerm) || 
+          asset.name.toUpperCase().includes(searchTerm)
+        )
+      )
+      
+      const results = [...exactMatches, ...partialMatches]
       setFilteredAssets(results)
     }
 
