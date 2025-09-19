@@ -5,10 +5,10 @@ import {
 } from "@/types/crypto"
 
 const API_ENDPOINTS = [
-  "https://api.binance.com/api/v3", // Try international first (most coins)
+  "https://api.binance.us/api/v3", // US first (works in US)
+  "https://api.binance.com/api/v3", // International (more coins if accessible)
   "https://api1.binance.com/api/v3", // Alternative international endpoint
   "https://api2.binance.com/api/v3", // Another alternative
-  "https://api.binance.us/api/v3", // US fallback (fewer coins but works in US)
 ]
 
 const globalCache: Map<string, { data: any; timestamp: number }> = new Map()

@@ -17,40 +17,68 @@ class BinanceWebSocketService {
   private reconnectDelay = 1000
   private currentEndpointIndex = 0
   private endpoints = [
-    'wss://stream.binance.com:9443',      // Try international first (most coins)
+    'wss://stream.binance.us:9443',       // US streaming WebSocket for market data
+    'wss://stream.binance.com:9443',      // International (more coins if accessible)
     'wss://stream.binance.com:443',       // Alternative port for international
     'wss://data-stream.binance.com:9443', // Alternative domain
-    'wss://stream.binance.us:9443',       // US fallback (fewer coins but works in US)
   ]
 
   connect(streams: string[]) {
-    if (
-      this.isConnecting ||
-      (this.ws && this.ws.readyState === WebSocket.OPEN)
-    ) {
-      console.log("WebSocket already connected or connecting")
+    // Check if actually connected (not just existing)
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      console.log("WebSocket already connected")
+      return
+    }
+    
+    // Clean up any stale WebSocket
+    if (this.ws && this.ws.readyState !== WebSocket.OPEN) {
+      console.log("Cleaning up stale WebSocket")
+      this.ws.close()
+      this.ws = null
+      this.isConnecting = false
+    }
+    
+    // If connecting, skip
+    if (this.isConnecting) {
+      console.log("WebSocket connection already in progress")
       return
     }
 
     this.streams = streams
     this.isConnecting = true
+    console.log(`Starting WebSocket connection to ${this.endpoints[this.currentEndpointIndex]}`)
 
     const baseUrl = this.endpoints[this.currentEndpointIndex]
     const streamUrl =
       streams.length === 1
         ? `${baseUrl}/ws/${streams[0]}`
         : `${baseUrl}/stream?streams=${streams.join("/")}`
+    
+    console.log(`Connecting to: ${streamUrl}`)
 
     try {
       this.ws = new WebSocket(streamUrl)
+      
+      // Add a connection timeout
+      const connectionTimeout = setTimeout(() => {
+        if (this.ws && this.ws.readyState === WebSocket.CONNECTING) {
+          console.error('WebSocket connection timeout - closing')
+          this.ws.close()
+        }
+      }, 10000) // 10 second timeout
 
       this.ws.onopen = () => {
+        clearTimeout(connectionTimeout)
         console.log(`WebSocket connected to ${this.endpoints[this.currentEndpointIndex]}`)
         this.isConnecting = false
         this.reconnectAttempts = 0
-        if (this.currentEndpointIndex !== 0) {
-          console.log("Successfully connected to fallback endpoint")
+        
+        if (this.currentEndpointIndex === 0) {
+          console.log("Connected to Binance.US WebSocket")
+        } else if (this.currentEndpointIndex === 1) {
+          console.log("Connected to Binance.com WebSocket (International)")
         }
+        
         this.connectionHandlers.forEach((handler) => handler())
         this.setupPing()
       }
@@ -58,6 +86,16 @@ class BinanceWebSocketService {
       this.ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data)
+          
+          // Log first few messages for debugging
+          if (data && !data.result) { // Skip ping/pong responses
+            if (Array.isArray(data) && data.length > 0) {
+              console.log(`Received ${data.length} ticker updates from WebSocket`)
+            } else if (data.e) {
+              console.log(`Received ${data.e} event for ${data.s}`)
+            }
+          }
+          
           this.messageHandlers.forEach((handler) => handler(data))
         } catch (error) {
           console.error("Error parsing WebSocket message:", error)
@@ -66,27 +104,48 @@ class BinanceWebSocketService {
 
       this.ws.onerror = (error) => {
         console.error(`WebSocket error on ${this.endpoints[this.currentEndpointIndex]}:`, error)
+        // Log the actual WebSocket URL for debugging
+        if (this.ws) {
+          console.error(`Failed URL: ${this.ws.url}, ReadyState: ${this.ws.readyState}`)
+        }
         this.errorHandlers.forEach((handler) => handler(error))
       }
 
       this.ws.onclose = () => {
         console.log(`WebSocket disconnected from ${this.endpoints[this.currentEndpointIndex]}`)
         this.isConnecting = false
-        this.cleanup()
-        this.disconnectionHandlers.forEach((handler) => handler())
         
-        if (this.reconnectAttempts === 0 && this.currentEndpointIndex < this.endpoints.length - 1) {
+        // Try next endpoint if we haven't exhausted all options
+        if (this.currentEndpointIndex < this.endpoints.length - 1 && this.reconnectAttempts === 0) {
           this.currentEndpointIndex++
           console.log(`Trying next endpoint: ${this.endpoints[this.currentEndpointIndex]}`)
+          // Try next endpoint immediately
           this.connect(this.streams)
         } else {
+          // All endpoints tried or this is a reconnect - cleanup and schedule reconnect
+          this.cleanup()
+          this.disconnectionHandlers.forEach((handler) => handler())
+          
+          // Reset to first endpoint for next reconnect cycle
+          if (this.reconnectAttempts === 0) {
+            this.currentEndpointIndex = 0
+          }
+          
           this.scheduleReconnect()
         }
       }
     } catch (error) {
       console.error("Error creating WebSocket:", error)
       this.isConnecting = false
-      this.scheduleReconnect()
+      
+      // Try next endpoint if available
+      if (this.currentEndpointIndex < this.endpoints.length - 1) {
+        this.currentEndpointIndex++
+        console.log(`Error with ${this.endpoints[this.currentEndpointIndex - 1]}, trying ${this.endpoints[this.currentEndpointIndex]}`)
+        this.connect(this.streams)
+      } else {
+        this.scheduleReconnect()
+      }
     }
   }
 
@@ -140,6 +199,9 @@ class BinanceWebSocketService {
       this.ws = null
     }
 
+    this.isConnecting = false // IMPORTANT: Reset connecting flag
+    this.currentEndpointIndex = 0 // Start fresh next time
+    this.reconnectAttempts = 0 // Reset attempts
     this.messageHandlers.clear()
     this.connectionHandlers.clear()
     this.disconnectionHandlers.clear()

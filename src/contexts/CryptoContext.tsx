@@ -134,6 +134,11 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
     (ticker: Binance24hrTickerStream) => {
       const symbol = ticker.s.replace("USDT", "")
       const currentAsset = liveDataRef.current.get(symbol)
+      
+      // Debug logging
+      if (symbol === "BTC" || symbol === "ETH") {
+        console.log(`Price update for ${symbol}: ${ticker.c}`)
+      }
 
       if (currentAsset) {
         const oldPrice = currentAsset.price
@@ -221,11 +226,13 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
 
           setCryptoAssets(assets)
           setFilteredAssets(assets)
-        }
-
-        // Connect to WebSocket only if not already connected
-        if (!binanceWS.isConnected()) {
-          binanceWS.connect(["!ticker@arr"])
+          
+          // Test with just BTC first
+          const streams = ['btcusdt@ticker']
+          console.log(`Testing with single stream: ${streams[0]}`)
+          
+          // Always try to connect to WebSocket (it will handle duplicate connections)
+          binanceWS.connect(streams)
         }
       } catch (error) {
         console.error("Error initializing crypto data:", error)
@@ -240,14 +247,24 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
 
     // WebSocket event handlers
     const unsubscribeMessage = binanceWS.onMessage((data) => {
-      if (Array.isArray(data)) {
+      // Handle multi-stream format
+      if (data.stream && data.data) {
+        const ticker = data.data
+        if (ticker.e === "24hrTicker") {
+          handleTickerUpdate(ticker as Binance24hrTickerStream)
+        }
+      }
+      // Handle single stream format
+      else if (data.e === "24hrTicker") {
+        handleTickerUpdate(data as Binance24hrTickerStream)
+      }
+      // Handle array format (for !ticker@arr)
+      else if (Array.isArray(data)) {
         data.forEach((ticker: any) => {
-          if (ticker.e === "24hrTicker" || ticker.e === "24hrMiniTicker") {
+          if (ticker.e === "24hrTicker") {
             handleTickerUpdate(ticker as Binance24hrTickerStream)
           }
         })
-      } else if (data.e === "24hrTicker" || data.e === "24hrMiniTicker") {
-        handleTickerUpdate(data as Binance24hrTickerStream)
       }
     })
 
