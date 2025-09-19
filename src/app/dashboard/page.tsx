@@ -15,11 +15,16 @@ import {
   RiDashboardLine,
   RiSearchLine,
 } from "@remixicon/react"
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect, useRef } from "react"
+import { CryptoAsset } from "@/types/crypto"
 
 export default function DashboardPage() {
   const {
     topAssets,
+    topGainers,
+    topLosers,
+    highVolume,
+    trending,
     isLoading,
     isConnected,
     searchQuery,
@@ -33,6 +38,30 @@ export default function DashboardPage() {
 
   const [activeTab, setActiveTab] = useState<TabCategory>("trending")
   const [showOverview, setShowOverview] = useState(false)
+  
+  // Lock the order of assets on first load for each tab
+  const lockedPositions = useRef<Record<TabCategory, string[]>>({
+    trending: [],
+    gainers: [],
+    losers: [],
+    volume: [],
+    all: []
+  })
+  
+  // Initialize locked positions once when data first loads
+  useEffect(() => {
+    if (!isLoading && topAssets.length > 0) {
+      if (lockedPositions.current.trending.length === 0) {
+        lockedPositions.current = {
+          trending: trending.map(a => a.symbol),
+          gainers: topGainers.map(a => a.symbol),
+          losers: topLosers.map(a => a.symbol),
+          volume: highVolume.map(a => a.symbol),
+          all: topAssets.map(a => a.symbol)
+        }
+      }
+    }
+  }, [isLoading, topAssets.length]) // Only depend on loading state and if we have data
 
   const tabs = [
     { value: "trending" as TabCategory, label: "Trending" },
@@ -42,12 +71,54 @@ export default function DashboardPage() {
     { value: "all" as TabCategory, label: "All Coins" },
   ]
 
-  // Get the right assets based on active tab, maintaining stable positions
+  // Get the right assets based on active tab with locked positions
   const displayedAssets = useMemo(() => {
     if (searchQuery) return filteredAssets
-    // Always show the same top 50 assets regardless of tab for stable positioning
-    return topAssets
-  }, [topAssets, filteredAssets, searchQuery])
+    
+    // Get the locked order for current tab
+    const lockedOrder = lockedPositions.current[activeTab] || []
+    
+    // Get the current data based on tab
+    let currentData: CryptoAsset[] = []
+    switch (activeTab) {
+      case "trending":
+        currentData = trending
+        break
+      case "gainers":
+        currentData = topGainers
+        break
+      case "losers":
+        currentData = topLosers
+        break
+      case "volume":
+        currentData = highVolume
+        break
+      case "all":
+        currentData = topAssets
+        break
+      default:
+        currentData = topAssets
+    }
+    
+    // If we have locked positions, sort the current data to match the locked order
+    if (lockedOrder.length > 0) {
+      const dataMap = new Map(currentData.map(asset => [asset.symbol, asset]))
+      const sortedAssets: CryptoAsset[] = []
+      
+      // Add assets in the locked order
+      for (const symbol of lockedOrder) {
+        const asset = dataMap.get(symbol)
+        if (asset) {
+          sortedAssets.push(asset)
+        }
+      }
+      
+      return sortedAssets
+    }
+    
+    // If no locked positions yet, return current data as-is
+    return currentData
+  }, [activeTab, topAssets, topGainers, topLosers, highVolume, trending, filteredAssets, searchQuery])
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-950">

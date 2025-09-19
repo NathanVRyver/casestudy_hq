@@ -9,7 +9,6 @@ import { useCrypto } from "@/contexts/CryptoContext"
 import {
   RiStockLine,
   RiExchangeDollarLine,
-  RiLineChartLine,
   RiCoinLine,
   RiArrowUpLine,
   RiArrowDownLine
@@ -54,13 +53,6 @@ export function MarketOverview({ className }: MarketOverviewProps) {
       color: "purple"
     },
     {
-      title: "BTC Dominance",
-      value: formatValue(marketStats.btcDominance, "percent"),
-      change: 0,
-      icon: RiLineChartLine,
-      color: "orange"
-    },
-    {
       title: "Active Coins",
       value: marketStats.activeCoins.toString(),
       change: 0,
@@ -77,7 +69,7 @@ export function MarketOverview({ className }: MarketOverviewProps) {
   return (
     <div className={cx("space-y-6", className)}>
       {/* Market Stats Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {statCards.map((stat) => {
           const Icon = stat.icon
           return (
