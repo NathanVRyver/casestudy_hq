@@ -1,50 +1,85 @@
-# Tremor – Dashboard
+# Real-Time Cryptocurrency Dashboard
 
-`Dashboard` is a SaaS application template from [Tremor](https://tremor.so). It's built
-using [`Tremor Raw`](https://raw.tremor.so/docs/getting-started/installation)
-and [Next.js](https://nextjs.org).
+Displays live crypto prices, market data, and trading information using Binance WebSocket API.
 
-## Getting started
+## Technical Implementation
 
-1. Install the dependencies. We recommend using pnpm. If you want to use `npm`,
-   just replace `pnpm` with `npm`.
+### Architecture
+
+- Next.js 14.2.23 with TypeScript and App Router
+- NextAuth v5 beta for authentication with credentials provider
+- Binance WebSocket API for real-time data (!ticker@arr stream)
+- React Context pattern for centralized state management
+- Tailwind CSS with custom design system
+
+### Data Flow
+
+1. Binance WebSocket streams live ticker data
+2. Data stored immediately in refs for instant access
+3. UI updates throttled to 60fps using requestAnimationFrame
+4. Price direction calculated by comparing current vs previous prices
+5. Components consume data through centralized CryptoContext
+
+### Performance Optimizations
+
+- WebSocket data cached in refs to avoid state update delays
+- Throttled UI rendering to maintain smooth 60fps
+- Price direction tracking without triggering unnecessary re-renders
+- Minimal DOM updates through selective component re-rendering
+
+### Authentication
+
+Demo accounts available:
+
+- admin@athenahq.com / admin123
+- demo@athenahq.com / demo123
+
+## Development
+
+Install dependencies:
 
 ```bash
 pnpm install
 ```
 
-2. Then, start the development server:
+Start development server:
 
 ```bash
 pnpm run dev
 ```
 
-3. Visit [http://localhost:3000](http://localhost:3000) in your browser to view
-   the template.
+Build for production:
 
-## Notes
+```bash
+pnpm run build
+```
 
-This project uses
-[`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to
-automatically optimize and load Inter, a custom Google Font.
+## Environment Variables
 
-This project uses
-[`Tremor Raw`](https://raw.tremor.so/docs/getting-started/installation)
-components for the UI.
+Required for deployment/development:
+can just generate the secret key using: openssl rand -base64 32
 
-## License
+```
+NEXTAUTH_SECRET=your-secret-key
+NEXTAUTH_URL=your-production-url
+```
 
-This site template is a commercial product and is licensed under the
-[Tremor License](https://blocks.tremor.so/license).
+## Technical Decisions
 
-## Learn more
+### Why React Context for State Management
 
-For a deeper understanding of the technologies used in this template, check out
-the resources listed below:
+- Centralized data source for all components
+- Eliminates prop drilling
+- Single WebSocket connection shared across components
 
-- [Tremor Raw](https://raw.tremor.so) - Tremor Raw documentation
-- [Tailwind CSS](https://tailwindcss.com) - A utility-first CSS framework
-- [Next.js](https://nextjs.org/docs) - Next.js documentation
-- [Radix UI](https://www.radix-ui.com) - Radix UI Website
-- [Recharts](https://recharts.org) - Recharts documentation and website
-- [Tanstack](https://tanstack.com/table/latest) - TanStack table documentation
+### Why Throttled Updates
+
+- Prevents UI blocking from high-frequency WebSocket messages
+- Maintains smooth 60fps performance
+- Reduces unnecessary re-renders
+
+### Why Refs for Immediate Data Storage
+
+- WebSocket data available instantly without waiting for state updates
+- Price direction calculations use most recent data
+- Prevents stale closures in event handlers
