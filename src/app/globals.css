@@ -1,3 +1,185 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Berkeley+Mono:ital,wght@0,400;0,500;1,400&display=swap');
+
+/* Monochrome Design System */
+:root {
+  /* Light mode */
+  --background: 254 252 248; /* cream */
+  --foreground: 28 25 23; /* stone-800 */
+  --card: 250 248 244; /* cream-100 */
+  --card-foreground: 28 25 23;
+  --border: 231 229 228; /* stone-200 */
+  --input: 245 242 237; /* cream-200 */
+  --primary: 28 25 23;
+  --primary-foreground: 250 248 244;
+  --secondary: 245 245 244; /* stone-100 */
+  --secondary-foreground: 28 25 23;
+  --muted: 231 229 228;
+  --muted-foreground: 120 113 108; /* stone-500 */
+  --accent: 245 245 244;
+  --accent-foreground: 28 25 23;
+  --profit: 22 163 74; /* green-600 */
+  --loss: 220 38 38; /* red-600 */
+}
+
+.dark {
+  /* Dark mode */
+  --background: 12 10 9; /* stone-950 */
+  --foreground: 250 250 249; /* stone-50 */
+  --card: 28 25 23; /* stone-800 */
+  --card-foreground: 250 250 249;
+  --border: 68 64 60; /* stone-700 */
+  --input: 41 37 36; /* stone-800 */
+  --primary: 250 250 249;
+  --primary-foreground: 28 25 23;
+  --secondary: 41 37 36;
+  --secondary-foreground: 250 250 249;
+  --muted: 68 64 60;
+  --muted-foreground: 168 162 158; /* stone-400 */
+  --accent: 41 37 36;
+  --accent-foreground: 250 250 249;
+}
+
+/* Base Styles */
+* {
+  border-color: rgb(var(--border));
+}
+
+body {
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  font-variant-numeric: tabular-nums;
+  background: rgb(var(--background));
+  color: rgb(var(--foreground));
+  background-image: var(--tw-gradient-stops, ), var(--noise, );
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgb(var(--muted));
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--muted-foreground));
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--foreground));
+}
+
+/* Monochrome Components */
+@layer components {
+  .mono-card {
+    background: rgb(var(--card));
+    border: 1px solid rgb(var(--border));
+    color: rgb(var(--card-foreground));
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+  }
+  
+  .mono-card:hover {
+    box-shadow: var(--tw-shadow-xl);
+    transform: translateY(-1px);
+  }
+  
+  .mono-button-primary {
+    background: rgb(var(--primary));
+    color: rgb(var(--primary-foreground));
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
+  }
+  
+  .mono-button-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--tw-shadow-medium);
+  }
+  
+  .mono-button-secondary {
+    background: transparent;
+    border: 1px solid rgb(var(--border));
+    color: rgb(var(--foreground));
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    transition: all 0.15s ease;
+  }
+  
+  .mono-button-secondary:hover {
+    background: rgb(var(--secondary));
+    transform: translateY(-1px);
+  }
+  
+  .price-up {
+    color: rgb(var(--profit));
+  }
+  
+  .price-down {
+    color: rgb(var(--loss));
+  }
+  
+  .mono-input {
+    background: rgb(var(--input));
+    border: 1px solid rgb(var(--border));
+    color: rgb(var(--foreground));
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    transition: all 0.15s ease;
+  }
+  
+  .mono-input:focus {
+    outline: none;
+    border-color: rgb(var(--primary));
+    box-shadow: 0 0 0 3px rgb(var(--primary) / 0.1);
+  }
+  
+  .mono-input::placeholder {
+    color: rgb(var(--muted-foreground));
+  }
+  
+  .loading-skeleton {
+    background: rgb(var(--muted));
+    border-radius: 0.25rem;
+  }
+  
+  /* Typography Styles */
+  .text-display {
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.025em;
+  }
+  
+  .text-mono {
+    font-family: 'Berkeley Mono', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  
+  /* Page transitions */
+  .page-transition {
+    animation: fadeInUp 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+}
+
+/* Utilities */
+@layer utilities {
+  .font-variant-numeric-tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  
+  .bg-texture {
+    background-image: var(--noise);
+  }
+  
+  .text-balance {
+    text-wrap: balance;
+  }
+}

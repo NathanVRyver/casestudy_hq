@@ -19,31 +19,31 @@ export function PriceTicker({ assets, className }: PriceTickerProps) {
         {assets.concat(assets).map((asset, index) => (
           <div
             key={`${asset.symbol}-${index}`}
-            className="flex items-center gap-3 rounded-lg bg-gray-100 px-4 py-2 dark:bg-gray-800"
+            className="flex items-center gap-3 rounded-lg bg-stone-100 border border-stone-200 px-4 py-2 transition-all duration-200 hover:bg-stone-150 dark:bg-stone-800 dark:border-stone-700 dark:hover:bg-stone-750"
           >
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-gray-900 dark:text-gray-50">
+            <div className="flex items-center gap-3">
+              <span className="text-display font-semibold text-stone-900 dark:text-stone-50 text-sm tracking-tight">
                 {asset.symbol}
               </span>
               <span className={cx(
-                "transition-all duration-200 font-medium",
+                "transition-all duration-300 text-mono font-semibold tabular-nums",
                 isPriceChanging(asset.symbol) === 'up'
-                  ? "text-green-600 dark:text-green-400"
+                  ? "price-up animate-count-up"
                   : isPriceChanging(asset.symbol) === 'down'
-                  ? "text-red-600 dark:text-red-400"
+                  ? "price-down animate-count-up"
                   : asset.change24hPercent >= 0 
-                    ? "text-green-600 dark:text-green-400" 
-                    : "text-red-600 dark:text-red-400"
+                    ? "price-up" 
+                    : "price-down"
               )}>
                 ${formatPrice(asset.price)}
               </span>
             </div>
             
             <div className={cx(
-              "flex items-center gap-1 text-sm",
+              "flex items-center gap-1 text-sm text-mono tabular-nums font-medium",
               asset.change24hPercent >= 0 
-                ? "text-green-600 dark:text-green-400" 
-                : "text-red-600 dark:text-red-400"
+                ? "price-up" 
+                : "price-down"
             )}>
               {asset.change24hPercent >= 0 ? (
                 <RiArrowUpLine className="h-3 w-3" />
@@ -67,11 +67,19 @@ export function PriceTicker({ assets, className }: PriceTickerProps) {
         }
         
         .animate-scroll {
-          animation: scroll 30s linear infinite;
+          animation: scroll 40s linear infinite;
         }
         
         .animate-scroll:hover {
           animation-play-state: paused;
+        }
+        
+        .animate-scroll > div {
+          transition: all 0.2s ease;
+        }
+        
+        .animate-scroll > div:hover {
+          transform: scale(1.05);
         }
       `}</style>
     </div>

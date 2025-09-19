@@ -122,22 +122,22 @@ export default function DashboardPage() {
   }, [activeTab, topAssets, topGainers, topLosers, highVolume, trending, filteredAssets, searchQuery])
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
+    <div className="min-h-screen bg-cream bg-texture dark:bg-stone-950 page-transition">
       {/* Header - shows overview toggle */}
-      <div className="sticky top-16 lg:top-0 z-30 border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <div className="sticky top-16 lg:top-0 z-30 border-b border-stone-200 bg-cream/95 backdrop-blur-sm dark:border-stone-800 dark:bg-stone-950/95">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="flex h-12 lg:h-16 items-center justify-between lg:justify-end">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-50 lg:hidden">
+            <h2 className="text-display text-lg font-semibold text-stone-900 dark:text-stone-50 lg:hidden">
               Dashboard
             </h2>
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setShowOverview(!showOverview)}
                 className={cx(
-                  "rounded-lg p-2 transition-colors",
+                  "rounded-lg p-2 transition-all duration-200",
                   showOverview
-                    ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/20 dark:text-indigo-400"
-                    : "text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-gray-800 dark:hover:text-gray-300",
+                    ? "bg-stone-200 text-stone-900 dark:bg-stone-700 dark:text-stone-50"
+                    : "text-stone-600 hover:bg-stone-100 hover:text-stone-900 dark:text-stone-400 dark:hover:bg-stone-800 dark:hover:text-stone-50",
                 )}
               >
                 <RiDashboardLine className="h-5 w-5" />
@@ -149,13 +149,13 @@ export default function DashboardPage() {
 
       {/* Price Ticker */}
       {topAssets.length > 0 && (
-        <div className="border-b border-gray-200 bg-white py-2 dark:border-gray-800 dark:bg-gray-900">
+        <div className="border-b border-stone-200 bg-stone-100/50 py-2 backdrop-blur-sm dark:border-stone-800 dark:bg-stone-900/50">
           <PriceTicker assets={topAssets.slice(0, 20)} />
         </div>
       )}
 
       {/* Search and Tabs */}
-      <div className="border-b border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900">
+      <div className="border-b border-stone-200 bg-stone-50/80 backdrop-blur-sm dark:border-stone-800 dark:bg-stone-900/80">
         <div className="px-4 sm:px-6 lg:px-8">
           <div className="py-4">
             <Searchbar
@@ -187,8 +187,8 @@ export default function DashboardPage() {
         {isLoading ? (
           <div className="flex h-64 items-center justify-center">
             <div className="text-center">
-              <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-gray-300 border-t-indigo-600"></div>
-              <p className="mt-4 text-gray-500 dark:text-gray-400">
+              <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-stone-200 border-t-stone-900 dark:border-stone-800 dark:border-t-stone-50"></div>
+              <p className="mt-4 text-stone-500 dark:text-stone-400">
                 Loading crypto data...
               </p>
             </div>
@@ -196,26 +196,29 @@ export default function DashboardPage() {
         ) : displayedAssets.length === 0 ? (
           <div className="flex h-64 items-center justify-center">
             <div className="text-center">
-              <RiSearchLine className="mx-auto h-12 w-12 text-gray-400" />
-              <p className="mt-4 text-gray-500 dark:text-gray-400">
+              <RiSearchLine className="mx-auto h-12 w-12 text-stone-400" />
+              <p className="mt-4 text-stone-500 dark:text-stone-400">
                 No cryptocurrencies found
               </p>
             </div>
           </div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {displayedAssets.map((asset) => (
               <Card
                 key={asset.symbol}
-                className="group relative overflow-hidden transition-all hover:shadow-lg"
+                className="group relative overflow-hidden animate-fade-in-up"
+                style={{
+                  animationDelay: `${displayedAssets.indexOf(asset) * 50}ms`,
+                }}
               >
                 <div className="p-4">
                   <div className="mb-3 flex items-start justify-between">
                     <div>
-                      <h3 className="font-semibold text-gray-900 dark:text-gray-50">
+                      <h3 className="text-display font-semibold text-stone-900 dark:text-stone-50">
                         {asset.symbol}
                       </h3>
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-stone-500 dark:text-stone-400">
                         {asset.name}
                       </p>
                     </div>
@@ -238,22 +241,22 @@ export default function DashboardPage() {
                     <div>
                       <p
                         className={cx(
-                          "text-2xl font-bold transition-colors duration-200",
+                          "text-2xl font-bold text-mono tabular-nums transition-all duration-300",
                           isPriceChanging(asset.symbol) === "up"
-                            ? "text-green-600 dark:text-green-400"
+                            ? "price-up animate-count-up"
                             : isPriceChanging(asset.symbol) === "down"
-                              ? "text-red-600 dark:text-red-400"
-                              : "text-gray-900 dark:text-gray-50",
+                              ? "price-down animate-count-up"
+                              : "text-stone-900 dark:text-stone-50",
                         )}
                       >
                         ${formatPrice(asset.price)}
                       </p>
                       <p
                         className={cx(
-                          "text-sm",
+                          "text-sm text-mono tabular-nums",
                           asset.change24h >= 0
-                            ? "text-green-600 dark:text-green-400"
-                            : "text-red-600 dark:text-red-400",
+                            ? "price-up"
+                            : "price-down",
                         )}
                       >
                         {asset.change24h >= 0 ? "+" : ""}$
@@ -261,20 +264,20 @@ export default function DashboardPage() {
                       </p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 border-t border-gray-200 pt-2 dark:border-gray-700">
+                    <div className="grid grid-cols-2 gap-2 border-t border-stone-200 dark:border-stone-700 pt-3 mt-3">
                       <div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wide">
                           24h Volume
                         </p>
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-50">
+                        <p className="text-sm text-mono font-medium text-stone-900 dark:text-stone-50 tabular-nums">
                           {formatVolume(asset.volume24h)}
                         </p>
                       </div>
                       <div>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
+                        <p className="text-xs text-stone-500 dark:text-stone-400 uppercase tracking-wide">
                           24h Range
                         </p>
-                        <p className="text-sm font-medium text-gray-900 dark:text-gray-50">
+                        <p className="text-sm text-mono font-medium text-stone-900 dark:text-stone-50 tabular-nums">
                           ${formatPrice(asset.low24h)} - $
                           {formatPrice(asset.high24h)}
                         </p>
@@ -283,13 +286,13 @@ export default function DashboardPage() {
                   </div>
 
                   {/* Live indicator */}
-                  <div className="absolute right-2 top-2">
+                  <div className="absolute right-3 top-3">
                     <div
                       className={cx(
-                        "h-2 w-2 rounded-full",
+                        "h-2 w-2 rounded-full transition-all duration-200",
                         isRecentlyUpdated(asset.symbol)
-                          ? "bg-green-500"
-                          : "bg-gray-300 dark:bg-gray-600",
+                          ? "bg-profit animate-data-pulse"
+                          : "bg-stone-300 dark:bg-stone-600",
                       )}
                     />
                   </div>

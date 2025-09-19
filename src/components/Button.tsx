@@ -10,39 +10,19 @@ import { cx, focusRing } from "@/lib/utils"
 const buttonVariants = tv({
   base: [
     // base
-    "relative inline-flex items-center justify-center whitespace-nowrap rounded-md border px-3 py-2 text-center text-sm font-medium shadow-sm transition-all duration-100 ease-in-out",
+    "relative inline-flex items-center justify-center whitespace-nowrap rounded-lg border px-4 py-2.5 text-center text-sm font-semibold tracking-wider transition-all duration-300 ease-out overflow-hidden",
     // disabled
-    "disabled:pointer-events-none disabled:shadow-none",
+    "disabled:pointer-events-none disabled:opacity-50",
     // focus
-    focusRing,
+    "focus:outline-none focus:ring-2 focus:ring-athena-gold/20 focus:ring-offset-2 focus:ring-offset-obsidian",
   ],
   variants: {
     variant: {
       primary: [
-        // border
-        "border-transparent",
-        // text color
-        "text-white dark:text-gray-900",
-        // background color
-        "bg-indigo-600 dark:bg-indigo-500",
-        // hover color
-        "hover:bg-indigo-500 dark:hover:bg-indigo-600",
-        // disabled
-        "disabled:bg-indigo-100 disabled:text-gray-400",
-        "disabled:dark:bg-indigo-800 disabled:dark:text-indigo-400",
+        "mono-button-primary",
       ],
       secondary: [
-        // border
-        "border-gray-300 dark:border-gray-800",
-        // text color
-        "text-gray-900 dark:text-gray-50",
-        // background color
-        "bg-white dark:bg-gray-950",
-        //hover color
-        "hover:bg-gray-50 dark:hover:bg-gray-900/60",
-        // disabled
-        "disabled:text-gray-400",
-        "disabled:dark:text-gray-600",
+        "mono-button-secondary",
       ],
       light: [
         // base
@@ -60,30 +40,15 @@ const buttonVariants = tv({
         "disabled:dark:bg-gray-800 disabled:dark:text-gray-600",
       ],
       ghost: [
-        // base
-        "shadow-none",
-        // border
-        "border-transparent",
-        // text color
-        "text-gray-900 dark:text-gray-50",
-        // hover color
-        "bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800/80",
-        // disabled
-        "disabled:text-gray-400",
-        "disabled:dark:text-gray-600",
+        "shadow-none border-transparent bg-transparent",
+        "text-stone-600 hover:text-stone-900 dark:text-stone-400 dark:hover:text-stone-50",
+        "hover:bg-stone-100 dark:hover:bg-stone-800 transition-all duration-200",
+        "disabled:text-stone-400 disabled:hover:text-stone-400 disabled:hover:bg-transparent",
       ],
       destructive: [
-        // text color
-        "text-white",
-        // border
-        "border-transparent",
-        // background color
-        "bg-red-600 dark:bg-red-700",
-        // hover color
-        "hover:bg-red-700 dark:hover:bg-red-600",
-        // disabled
-        "disabled:bg-red-300 disabled:text-white",
-        "disabled:dark:bg-red-950 disabled:dark:text-red-400",
+        "text-white font-semibold border-transparent",
+        "bg-loss hover:bg-red-700 transition-colors duration-200",
+        "disabled:bg-stone-300 disabled:text-stone-500 dark:disabled:bg-stone-700 dark:disabled:text-stone-400",
       ],
     },
   },

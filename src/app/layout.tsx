@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 import { ThemeProvider } from "next-themes"
 import { SessionProvider } from "next-auth/react"
-import { Inter } from "next/font/google"
+import { Inter, Playfair_Display } from "next/font/google"
 import "./globals.css"
 import { siteConfig } from "./siteConfig"
 import { CryptoProvider } from "@/contexts/CryptoContext"
@@ -10,7 +10,14 @@ import { ConditionalLayout } from "@/components/ConditionalLayout"
 const inter = Inter({
   subsets: ["latin"],
   display: "swap",
-  variable: "--font-inter",
+  variable: "--font-sans",
+})
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-display",
+  weight: ['400', '500', '600', '700'],
 })
 
 export const metadata: Metadata = {
@@ -48,7 +55,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.className} overflow-y-scroll scroll-auto antialiased selection:bg-indigo-100 selection:text-indigo-700 dark:bg-gray-950`}
+        className={`${inter.variable} ${playfair.variable} font-sans overflow-y-scroll scroll-auto antialiased selection:bg-stone-200 selection:text-stone-900 dark:selection:bg-stone-700 dark:selection:text-stone-50 bg-cream dark:bg-stone-950`}
         suppressHydrationWarning
       >
         <SessionProvider>

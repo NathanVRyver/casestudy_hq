@@ -159,12 +159,14 @@ function UserProfile() {
         variant="ghost"
         className={cx(
           focusRing,
-          "group flex w-full items-center justify-between rounded-md p-2 text-sm font-medium text-gray-900 hover:bg-gray-100 data-[state=open]:bg-gray-100 data-[state=open]:bg-gray-400/10 dark:text-gray-50 hover:dark:bg-gray-400/10",
+          "group flex w-full items-center justify-between rounded-md p-2 text-sm font-medium transition-all duration-200",
+          "text-stone-900 hover:bg-stone-100 data-[state=open]:bg-stone-100",
+          "dark:text-stone-50 dark:hover:bg-stone-800 dark:data-[state=open]:bg-stone-800",
         )}
       >
         <span className="flex items-center gap-3">
           <span
-            className="flex size-8 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white text-xs text-gray-700 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300"
+            className="flex size-8 shrink-0 items-center justify-center rounded-full border border-stone-300 bg-cream text-xs text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300 font-mono font-medium"
             aria-hidden="true"
           >
             {initials}
@@ -172,7 +174,7 @@ function UserProfile() {
           <span className="truncate">{displayName}</span>
         </span>
         <RiMore2Fill
-          className="size-4 shrink-0 text-gray-500 group-hover:text-gray-700 group-hover:dark:text-gray-400"
+          className="size-4 shrink-0 text-stone-500 group-hover:text-stone-700 group-hover:dark:text-stone-400 transition-colors duration-200"
           aria-hidden="true"
         />
       </Button>
@@ -187,10 +189,10 @@ export function CryptoSidebar() {
     <>
       {/* Desktop Sidebar */}
       <nav className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <aside className="flex grow flex-col gap-y-6 overflow-y-auto border-r border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
+        <aside className="flex grow flex-col gap-y-6 overflow-y-auto border-r border-stone-200 bg-cream p-4 dark:border-stone-800 dark:bg-stone-950 bg-texture">
           {/* App Logo/Title */}
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
+            <h1 className="text-display text-2xl font-semibold text-stone-900 dark:text-stone-50 tracking-tight">
               AthenaCrypto
             </h1>
           </div>
@@ -203,9 +205,9 @@ export function CryptoSidebar() {
       </nav>
 
       {/* Mobile Header */}
-      <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm lg:hidden dark:border-gray-800 dark:bg-gray-950">
+      <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-stone-200 bg-cream/95 backdrop-blur-sm px-4 shadow-soft lg:hidden dark:border-stone-800 dark:bg-stone-950/95">
         <div className="flex items-center">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-50">
+          <h1 className="text-display text-xl font-semibold text-stone-900 dark:text-stone-50 tracking-tight">
             AthenaCrypto
           </h1>
         </div>
@@ -213,9 +215,9 @@ export function CryptoSidebar() {
         <div className="flex items-center gap-2">
           {/* Connection status for mobile */}
           {isConnected ? (
-            <RiWifiLine className="size-5 text-green-600 dark:text-green-400" />
+            <RiWifiLine className="size-5 text-profit" />
           ) : (
-            <RiWifiOffLine className="size-5 text-red-600 dark:text-red-400" />
+            <RiWifiOffLine className="size-5 text-loss" />
           )}
 
           {/* Mobile User Profile */}
@@ -223,10 +225,10 @@ export function CryptoSidebar() {
             <Button
               aria-label="User settings"
               variant="ghost"
-              className="group flex items-center rounded-md p-1 text-sm font-medium text-gray-900 hover:bg-gray-100 data-[state=open]:bg-gray-100 dark:text-gray-50"
+              className="group flex items-center rounded-md p-1 text-sm font-medium text-stone-900 hover:bg-stone-100 data-[state=open]:bg-stone-100 dark:text-stone-50 dark:hover:bg-stone-800 dark:data-[state=open]:bg-stone-800 transition-colors duration-200"
             >
               <span
-                className="flex size-7 shrink-0 items-center justify-center rounded-full border border-gray-300 bg-white text-xs text-gray-700 dark:border-gray-800 dark:bg-gray-950 dark:text-gray-300"
+                className="flex size-7 shrink-0 items-center justify-center rounded-full border border-stone-300 bg-cream text-xs text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300 font-mono font-medium"
                 aria-hidden="true"
               >
                 {(() => {

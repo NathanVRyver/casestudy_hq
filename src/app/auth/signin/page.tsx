@@ -44,17 +44,17 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-950">
-      <Card className="w-full max-w-md p-8">
+    <div className="flex min-h-screen items-center justify-center bg-cream bg-texture px-4 dark:bg-stone-950">
+      <div className="mono-card w-full max-w-md p-8 page-transition">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-4">
+          <h1 className="text-display text-3xl font-semibold text-stone-900 dark:text-stone-50 mb-2">
             AthenaCrypto
           </h1>
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-50">
-            Sign in to your account
+          <h2 className="text-xl font-normal text-stone-700 dark:text-stone-300 mb-2">
+            Welcome back
           </h2>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Access your crypto dashboard
+          <p className="text-stone-500 dark:text-stone-400">
+            Sign in to access your dashboard
           </p>
         </div>
 
@@ -62,7 +62,7 @@ export default function SignInPage() {
           <div>
             <label
               htmlFor="email"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="mb-2 block text-sm font-medium text-stone-700 dark:text-stone-300"
             >
               Email
             </label>
@@ -73,14 +73,14 @@ export default function SignInPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="Enter your email"
-              className="w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-50"
+              className="mono-input w-full"
             />
           </div>
 
           <div>
             <label
               htmlFor="password"
-              className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300"
+              className="mb-2 block text-sm font-medium text-stone-700 dark:text-stone-300"
             >
               Password
             </label>
@@ -92,12 +92,12 @@ export default function SignInPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 placeholder="Enter your password"
-                className="w-full rounded-lg border border-gray-300 px-3 py-2 pr-10 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-50"
+                className="mono-input w-full pr-12"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+                className="absolute inset-y-0 right-0 flex items-center pr-4 text-stone-400 hover:text-stone-600 dark:hover:text-stone-300 transition-colors duration-200"
               >
                 {showPassword ? (
                   <RiEyeOffLine className="h-5 w-5" />
@@ -109,26 +109,30 @@ export default function SignInPage() {
           </div>
 
           {error && (
-            <div className="text-center text-sm text-red-600">{error}</div>
+            <div className="text-center text-sm text-loss bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/30 rounded-lg p-3">{error}</div>
           )}
 
-          <Button type="submit" disabled={isLoading} className="w-full">
+          <button type="submit" disabled={isLoading} className="mono-button-primary w-full">
             {isLoading ? "Signing in..." : "Sign in"}
-          </Button>
+          </button>
         </form>
 
-        <div className="mt-6 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
-          <h3 className="mb-2 text-sm font-medium text-gray-900 dark:text-gray-50">
-            Demo Accounts:
+        <div className="mt-6 rounded-lg bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-800 p-4">
+          <h3 className="mb-3 text-sm font-medium text-stone-700 dark:text-stone-300">
+            Demo Accounts
           </h3>
-          <div className="space-y-1 text-xs text-gray-600 dark:text-gray-400">
-            <h4> admin@athenahq.com</h4>
-            <p> admin123</p>
-            <h4 className="mt-2"> demo@athenahq.com</h4>
-            <p>demo123</p>
+          <div className="space-y-3 text-xs text-stone-500 dark:text-stone-400">
+            <div className="border-l-2 border-stone-300 dark:border-stone-600 pl-3">
+              <div className="font-mono text-stone-700 dark:text-stone-300">admin@athenahq.com</div>
+              <div className="text-stone-500 dark:text-stone-400">admin123</div>
+            </div>
+            <div className="border-l-2 border-stone-300 dark:border-stone-600 pl-3">
+              <div className="font-mono text-stone-700 dark:text-stone-300">demo@athenahq.com</div>
+              <div className="text-stone-500 dark:text-stone-400">demo123</div>
+            </div>
           </div>
         </div>
-      </Card>
+      </div>
     </div>
   )
 }
