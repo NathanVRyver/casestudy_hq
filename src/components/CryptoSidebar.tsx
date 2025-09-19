@@ -130,6 +130,36 @@ function UserProfileDropdown({ children }: { children: React.ReactNode }) {
   )
 }
 
+function MobileUserInitials() {
+  const { data: session } = useSession()
+  
+  const getInitials = (name?: string | null, email?: string | null) => {
+    if (name) {
+      return name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    }
+    if (email) {
+      return email.slice(0, 2).toUpperCase()
+    }
+    return "U"
+  }
+
+  const initials = getInitials(session?.user?.name, session?.user?.email)
+
+  return (
+    <span
+      className="bg-cream flex size-7 shrink-0 items-center justify-center rounded-full border border-stone-300 font-mono text-xs font-medium text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300"
+      aria-hidden="true"
+    >
+      {initials}
+    </span>
+  )
+}
+
 function UserProfile() {
   const { data: session } = useSession()
 
@@ -226,32 +256,7 @@ export function CryptoSidebar() {
               variant="ghost"
               className="group flex items-center rounded-md p-1 text-sm font-medium text-stone-900 transition-colors duration-200 hover:bg-stone-100 data-[state=open]:bg-stone-100 dark:text-stone-50 dark:hover:bg-stone-800 dark:data-[state=open]:bg-stone-800"
             >
-              <span
-                className="bg-cream flex size-7 shrink-0 items-center justify-center rounded-full border border-stone-300 font-mono text-xs font-medium text-stone-700 dark:border-stone-700 dark:bg-stone-900 dark:text-stone-300"
-                aria-hidden="true"
-              >
-                {(() => {
-                  const { data: session } = useSession()
-                  const getInitials = (
-                    name?: string | null,
-                    email?: string | null,
-                  ) => {
-                    if (name) {
-                      return name
-                        .split(" ")
-                        .map((n) => n[0])
-                        .join("")
-                        .toUpperCase()
-                        .slice(0, 2)
-                    }
-                    if (email) {
-                      return email.slice(0, 2).toUpperCase()
-                    }
-                    return "U"
-                  }
-                  return getInitials(session?.user?.name, session?.user?.email)
-                })()}
-              </span>
+              <MobileUserInitials />
             </Button>
           </UserProfileDropdown>
         </div>

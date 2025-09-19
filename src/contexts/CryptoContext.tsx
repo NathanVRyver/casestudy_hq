@@ -11,16 +11,6 @@ interface PriceDirection {
   intensity: number // 0-1 for animation intensity
 }
 
-interface PriceUpdate {
-  symbol: string
-  price: number
-  change24h: number
-  change24hPercent: number
-  volume24h: number
-  high24h: number
-  low24h: number
-  timestamp: number
-}
 
 interface CryptoContextType {
   // Core data
@@ -247,13 +237,17 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
 
   // Handle search
   useEffect(() => {
-    const searchAssets = async () => {
+    const searchAssets = () => {
       if (!searchQuery.trim()) {
         setFilteredAssets(cryptoAssets)
         return
       }
 
-      const results = await cryptoAPI.searchSymbols(searchQuery)
+      const searchTerm = searchQuery.toUpperCase()
+      const results = cryptoAssets.filter(asset => 
+        asset.symbol.includes(searchTerm) || 
+        asset.name.toUpperCase().includes(searchTerm)
+      )
       setFilteredAssets(results)
     }
 

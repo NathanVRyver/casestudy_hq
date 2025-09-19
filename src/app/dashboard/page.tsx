@@ -60,7 +60,7 @@ export default function DashboardPage() {
         }
       }
     }
-  }, [isLoading, topAssets.length]) // Only depend on loading state and if we have data
+  }, [isLoading, topAssets.length, trending, topGainers, topLosers, highVolume, topAssets]) // Only depend on loading state and if we have data
 
   const tabs = [
     { value: "trending" as TabCategory, label: "Trending" },
