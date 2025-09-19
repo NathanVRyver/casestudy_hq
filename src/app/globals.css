@@ -126,12 +126,10 @@ body {
   
   .price-direction-up {
     color: rgb(22 163 74); /* green-600 */
-    animation: priceFlashUp 0.6s ease-out;
   }
   
   .price-direction-down {
     color: rgb(220 38 38); /* red-600 */
-    animation: priceFlashDown 0.6s ease-out;
   }
   
   .price-direction-none {

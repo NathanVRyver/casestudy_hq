@@ -240,10 +240,10 @@ export default function DashboardPage() {
                     <div>
                       <p
                         className={cx(
-                          "text-2xl font-bold text-mono tabular-nums price-direction",
-                          getPriceDirection(asset.symbol).direction === 'up' && "price-direction-up",
-                          getPriceDirection(asset.symbol).direction === 'down' && "price-direction-down",
-                          getPriceDirection(asset.symbol).direction === 'none' && "price-direction-none text-stone-900 dark:text-stone-50"
+                          "text-2xl font-bold text-mono tabular-nums",
+                          getPriceDirection(asset.symbol).direction === 'up' && "text-green-600 dark:text-green-400",
+                          getPriceDirection(asset.symbol).direction === 'down' && "text-red-600 dark:text-red-400",
+                          getPriceDirection(asset.symbol).direction === 'none' && "text-stone-900 dark:text-stone-50"
                         )}
                       >
                         ${formatPrice(asset.price)}

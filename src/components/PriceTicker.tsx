@@ -27,13 +27,14 @@ export function PriceTicker({ assets, className }: PriceTickerProps) {
               </span>
               <span
                 className={cx(
-                  "text-mono font-semibold tabular-nums price-direction",
-                  getPriceDirection(asset.symbol).direction === 'up' && "price-direction-up",
-                  getPriceDirection(asset.symbol).direction === 'down' && "price-direction-down",
-                  getPriceDirection(asset.symbol).direction === 'none' && "price-direction-none",
-                  asset.change24hPercent >= 0
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-red-600 dark:text-red-400",
+                  "text-mono font-semibold tabular-nums",
+                  getPriceDirection(asset.symbol).direction === 'up' && "text-green-600 dark:text-green-400",
+                  getPriceDirection(asset.symbol).direction === 'down' && "text-red-600 dark:text-red-400",
+                  getPriceDirection(asset.symbol).direction === 'none' && (
+                    asset.change24hPercent >= 0
+                      ? "text-green-600 dark:text-green-400"
+                      : "text-red-600 dark:text-red-400"
+                  )
                 )}
               >
                 ${formatPrice(asset.price)}
