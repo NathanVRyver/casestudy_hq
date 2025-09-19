@@ -17,10 +17,10 @@ class BinanceWebSocketService {
   private reconnectDelay = 1000
   private currentEndpointIndex = 0
   private endpoints = [
-    'wss://stream.binance.us:9443',       // US streaming WebSocket for market data
-    'wss://stream.binance.com:9443',      // International (more coins if accessible)
+    'wss://stream.binance.com:9443',      // International first (more reliable for you)
     'wss://stream.binance.com:443',       // Alternative port for international
     'wss://data-stream.binance.com:9443', // Alternative domain
+    'wss://stream.binance.us:9443',       // US streaming WebSocket as fallback
   ]
 
   connect(streams: string[]) {
@@ -74,9 +74,9 @@ class BinanceWebSocketService {
         this.reconnectAttempts = 0
         
         if (this.currentEndpointIndex === 0) {
-          console.log("Connected to Binance.US WebSocket")
-        } else if (this.currentEndpointIndex === 1) {
           console.log("Connected to Binance.com WebSocket (International)")
+        } else if (this.currentEndpointIndex === 3) {
+          console.log("Connected to Binance.US WebSocket")
         }
         
         this.connectionHandlers.forEach((handler) => handler())
