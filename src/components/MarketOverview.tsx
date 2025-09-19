@@ -24,7 +24,6 @@ export function MarketOverview({ className }: MarketOverviewProps) {
     topLosers,
     formatPrice,
     formatVolume,
-    formatChange,
     getPriceDirection,
   } = useCrypto()
 
