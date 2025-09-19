@@ -190,7 +190,7 @@ export function CryptoSidebar() {
         <aside className="flex grow flex-col gap-y-6 overflow-y-auto border-r border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-950">
           {/* App Logo/Title */}
           <div className="flex items-center">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
               AthenaCrypto
             </h1>
           </div>
@@ -205,7 +205,7 @@ export function CryptoSidebar() {
       {/* Mobile Header */}
       <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm lg:hidden dark:border-gray-800 dark:bg-gray-950">
         <div className="flex items-center">
-          <h1 className="text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400">
+          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-50">
             AthenaCrypto
           </h1>
         </div>

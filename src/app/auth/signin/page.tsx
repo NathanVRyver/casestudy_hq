@@ -47,7 +47,7 @@ export default function SignInPage() {
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 dark:bg-gray-950">
       <Card className="w-full max-w-md p-8">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent dark:from-indigo-400 dark:to-purple-400 mb-4">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-50 mb-4">
             AthenaCrypto
           </h1>
           <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-50">

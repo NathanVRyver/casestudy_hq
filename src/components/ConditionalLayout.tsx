@@ -9,7 +9,6 @@ interface ConditionalLayoutProps {
 }
 
 export function ConditionalLayout({ children }: ConditionalLayoutProps) {
-  const { data: session, status } = useSession()
   const pathname = usePathname()
 
   // Pages where sidebar should not be shown
@@ -19,19 +18,7 @@ export function ConditionalLayout({ children }: ConditionalLayoutProps) {
     "/auth/error"
   ]
 
-  const shouldShowSidebar = session?.user && !noSidebarPages.includes(pathname)
-
-  if (status === "loading") {
-    // Show loading state
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-950">
-        <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-gray-500 dark:text-gray-400">Loading...</p>
-        </div>
-      </div>
-    )
-  }
+  const shouldShowSidebar = !noSidebarPages.some(page => pathname.startsWith(page))
 
   return (
     <>
