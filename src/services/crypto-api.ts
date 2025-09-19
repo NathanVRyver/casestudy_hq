@@ -30,7 +30,7 @@ export class CryptoAPIService {
       const data = await response.json()
       const usdtPairs = data.filter((ticker: any) => 
         ticker.symbol.endsWith("USDT") && 
-        parseFloat(ticker.volume) > 1000000
+        parseFloat(ticker.quoteVolume) > 100000 // Use quote volume (USDT) instead of base volume
       )
       
       this.setCache(cacheKey, usdtPairs)
