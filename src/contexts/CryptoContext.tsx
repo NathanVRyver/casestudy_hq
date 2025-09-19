@@ -135,8 +135,8 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
       const symbol = ticker.s.replace("USDT", "")
       const currentAsset = liveDataRef.current.get(symbol)
       
-      // Debug logging
-      if (symbol === "BTC" || symbol === "ETH") {
+      // Log price updates for major coins
+      if (symbol === "BTC" || symbol === "ETH" || symbol === "SOL") {
         console.log(`Price update for ${symbol}: ${ticker.c}`)
       }
 
@@ -227,9 +227,9 @@ export function CryptoProvider({ children }: CryptoProviderProps) {
           setCryptoAssets(assets)
           setFilteredAssets(assets)
           
-          // Test with just BTC first
-          const streams = ['btcusdt@ticker']
-          console.log(`Testing with single stream: ${streams[0]}`)
+          // Create ticker streams for all coins (Binance.US supports up to 1024 streams per connection)
+          const streams = assets.map(asset => `${asset.symbol.toLowerCase()}usdt@ticker`)
+          console.log(`Subscribing to ${streams.length} ticker streams for all coins`)
           
           // Always try to connect to WebSocket (it will handle duplicate connections)
           binanceWS.connect(streams)

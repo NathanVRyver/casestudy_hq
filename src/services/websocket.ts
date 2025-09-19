@@ -87,13 +87,9 @@ class BinanceWebSocketService {
         try {
           const data = JSON.parse(event.data)
           
-          // Log first few messages for debugging
-          if (data && !data.result) { // Skip ping/pong responses
-            if (Array.isArray(data) && data.length > 0) {
-              console.log(`Received ${data.length} ticker updates from WebSocket`)
-            } else if (data.e) {
-              console.log(`Received ${data.e} event for ${data.s}`)
-            }
+          // Only log for key coins to avoid console spam
+          if (data && !data.result && data.s && ['BTCUSDT', 'ETHUSDT', 'SOLUSDT'].includes(data.s)) {
+            console.log(`Received ${data.e} event for ${data.s}`)
           }
           
           this.messageHandlers.forEach((handler) => handler(data))
